@@ -52,3 +52,5 @@ class UserLogout(APIView):
             logger.error(
                 f'Request by user : {request.user} -- Error : Logging out of the system {e}')
             return response.exception_500(e)
+
+

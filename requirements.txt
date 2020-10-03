@@ -23,6 +23,7 @@ MarkupSafe==1.1.1
 odfpy==1.4.1
 openpyxl==3.0.3
 packaging==20.3
+passlib==1.7.2
 Pillow==7.1.2
 psycopg2==2.8.5
 pycryptodome==3.8.2
