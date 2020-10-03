@@ -48,11 +48,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
-
-    def save(self, *args, **kwargs):
-        if len(self.password) < 20:
-            self.password = hasher.encode(password=self.password, salt='salt', iterations=50000)
-            return super().save(*args, **kwargs)
+    #
+    # def save(self, *args, **kwargs):
+    #     if len(self.password) < 20:
+    #         self.password = hasher.encode(password=self.password, salt='salt', iterations=50000)
+    #         return super().save(*args, **kwargs)
 
     # .sa
     # def authenticate_otp(self, otp):
