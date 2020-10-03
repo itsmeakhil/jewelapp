@@ -18,8 +18,8 @@ class ContactStatus(BaseModel):
 class Customer(BaseModel):
     name = models.CharField(max_length=50, null=True, blank=True)
     address = models.TextField(null=True)
-    phone_number = models.CharField(max_length=20, null=False, blank=True)
-    email = models.CharField(max_length=150, null=True, blank=True)
+    phone_number = models.CharField(max_length=20, null=False, blank=True, unique=True)
+    email = models.CharField(max_length=150, null=True, blank=True, unique=True)
     is_attended = models.BooleanField(default=False)
 
     objects = BaseManager()
@@ -28,7 +28,7 @@ class Customer(BaseModel):
         return self.phone_number
 
     class Meta(object):
-        unique_together = (('phone_number', 'email'), )
+        unique_together = (('phone_number', 'email'),)
 
 
 class CustomerStatusData(BaseModel):

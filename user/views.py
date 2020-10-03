@@ -4,34 +4,36 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
-from utils import responses as response,logger
+from user.service import UserLoginService
+from utils import responses as response, logger
 from utils.utils import get_client_ip
 from user import service as user_service
-from user.models import User
-
-
 
 
 @permission_classes((AllowAny,))
 class UserLogin(APIView):
-    user_service = user_service.UserLoginService()
+    service = UserLoginService()
 
-    # API Documentation for User login API
-    @swagger_auto_schema(
-        operation_id='',
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'phone_number': openapi.Schema(
-                    type=openapi.TYPE_STRING
-                )
-            }
-        ),
-    )
+    # # API Documentation for User login API
+    # @swagger_auto_schema(
+    #     operation_id='',
+    #     request_body=openapi.Schema(
+    #         type=openapi.TYPE_OBJECT,
+    #         properties={
+    #             'username': openapi.Schema(
+    #                 type=openapi.TYPE_STRING
+    #             ),
+    #             'password':openapi.Schema(type=openapi.TYPE_STRING)
+    #         }
+    #     ),
+    # )
     def post(self, request):
         """User Login function"""
         try:
-            return self.user_service.user_login(request)
+            username = request.data.get('username')
+            print('user',username)
+            password = request.data.get('password')
+            return self.service.user_login(username, password)
         except Exception as e:
             logger.error(f'Request -- Error : Login in to system {e}')
             return response.exception_500(e)

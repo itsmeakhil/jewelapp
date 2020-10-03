@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import PBKDF2PasswordHasher
 from company.models import Branch
 from utils.basemodel import BaseModel
 from user.manager import UserManager, UserTypeManager
+from passlib.hash import pbkdf2_sha256
 
 hasher = PBKDF2PasswordHasher()
 
@@ -48,11 +49,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username
 
-    # def save(self, *args, **kwargs):
-    #     self.password = hasher.encode(password=self.password,
-    #                               salt='salt',
-    #                               iterations=50000)
-    #     self.save()
+    def save(self, *args, **kwargs):
+        if len(self.password) < 20:
+            self.password = hasher.encode(password=self.password, salt='salt', iterations=50000)
+            return super().save(*args, **kwargs)
 
     # .sa
     # def authenticate_otp(self, otp):
