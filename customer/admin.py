@@ -1,5 +1,5 @@
 from django.contrib import admin
-from customer.models import Customer, CustomerStatusData, ContactStatus
+from customer.models import Customer, CustomerStatusData, ContactStatus, Group
 from import_export import resources
 
 from import_export.admin import ImportExportModelAdmin
@@ -16,18 +16,19 @@ class CustomerAdmin(ImportExportModelAdmin, admin.ModelAdmin):
      Register the UserType class in django admin.
     """
 
-    list_display = ('name', 'phone_number', 'email')
+    list_display = ('name', 'phone_number', 'email','group')
     search_fields = ('name', 'phone_number')
     ordering = ('created_at',)
-    list_filter = ('name', 'created_at',)
+    list_filter = ('name', 'created_at','group',)
     exclude = ['is_delete', 'is_active']
     fieldsets = (
         (None, {
-            'fields': ('name', 'phone_number', 'email', 'is_attended')
+            'fields': ('name', 'phone_number', 'email', 'is_attended','group')
         }),
     )
 
 
+@admin.register(Group)
 @admin.register(ContactStatus)
 class ContactStatusAdmin(admin.ModelAdmin):
     """

@@ -15,8 +15,19 @@ class ContactStatus(BaseModel):
         return self.name
 
 
+class Group(BaseModel):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    description = models.TextField(null=True)
+
+    objects = BaseManager()
+
+    def __str__(self):
+        return self.name
+
+
 class Customer(BaseModel):
     name = models.CharField(max_length=50, null=True, blank=True)
+    group = models.ForeignKey(Group,on_delete=models.DO_NOTHING)
     address = models.TextField(null=True)
     phone_number = models.CharField(max_length=20, null=False, blank=True, unique=True)
     email = models.CharField(max_length=150, null=True, blank=True, unique=True)
