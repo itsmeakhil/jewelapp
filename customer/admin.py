@@ -16,19 +16,21 @@ class CustomerAdmin(ImportExportModelAdmin, admin.ModelAdmin):
      Register the UserType class in django admin.
     """
 
-    list_display = ('name', 'phone_number', 'email','group')
+    list_display = ('name', 'phone_number', 'email', 'group')
     search_fields = ('name', 'phone_number')
     ordering = ('created_at',)
-    list_filter = ('name', 'created_at','group',)
+    list_filter = ('name', 'created_at', 'group',)
     exclude = ['is_delete', 'is_active']
     fieldsets = (
         (None, {
-            'fields': ('name', 'phone_number', 'email', 'is_attended','group')
+            'fields': ('name', 'phone_number', 'email', 'is_attended', 'group', 'branch')
         }),
     )
 
 
-@admin.register(Group)
+admin.site.register(Group)
+
+
 @admin.register(ContactStatus)
 class ContactStatusAdmin(admin.ModelAdmin):
     """
@@ -42,7 +44,7 @@ class ContactStatusAdmin(admin.ModelAdmin):
     exclude = ['is_delete', 'is_active']
     fieldsets = (
         (None, {
-            'fields': ('name', 'description')
+            'fields': ('name', 'description', 'company')
         }),
     )
 

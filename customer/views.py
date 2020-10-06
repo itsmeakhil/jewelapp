@@ -22,6 +22,19 @@ class GetCustomer(APIView):
             return response.exception_500(e)
 
 
+class GetContactStatus(APIView):
+    service = customer_service.CustomerServicetype()
+
+    def get(self, request):
+        """User Login function"""
+        try:
+            company = request.GET.get('company')
+            return self.service.get_contact_status(company)
+        except Exception as e:
+            logger.error(f'Request -- Error : Login in to system {e}')
+            return response.exception_500(e)
+
+
 class UpdateCustomerStatus(APIView):
     service = customer_service.CustomerServicetype()
 
@@ -30,4 +43,15 @@ class UpdateCustomerStatus(APIView):
             return self.service.update_service_Status(data=request.data)
         except Exception as e:
             logger.error(f'Request -- Error : updating customer status in to system {e}')
+            return response.exception_500(e)
+
+
+class AddQuestionAnswer(APIView):
+    service = customer_service.CustomerServicetype()
+
+    def post(self, request):
+        try:
+            return self.service.add_question_response(data=request.data.get('answer'))
+        except Exception as e:
+            logger.error(f'Request -- Error : Question answer in to system {e}')
             return response.exception_500(e)

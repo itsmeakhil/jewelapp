@@ -1,6 +1,7 @@
+from questions.models import CustomerAnswers, Question, QuestionOption
 from utils import responses as response, constants, logger
 from customer.models import Customer, CustomerStatusData, ContactStatus
-from customer.serializers import CustomerSerializer
+from customer.serializers import CustomerSerializer, ContactStatusSerializer
 
 
 class CustomerServicetype:
@@ -14,7 +15,7 @@ class CustomerServicetype:
             customer_service = CustomerStatusData.objects.create(customer=customer, user=request.user, status=status)
             serializer = CustomerSerializer(customer)
             logger.info('Get customer success')
-            return response.get_success_200(' details loaded successfully', serializer.data)
+            return response.get_success_200('Customer details loaded successfully', serializer.data)
         logger.error(' No Customer data found ')
         return response.get_success_message('No data found')
 
@@ -26,3 +27,17 @@ class CustomerServicetype:
             customer_service.save()
             return response.post_success('Updated Customer Service Status')
         return response.error_response_400('Error Updating status')
+
+    def get_contact_status(self, company):
+        contact_status = ContactStatus.objects.filter(company=company)
+        serializer = ContactStatusSerializer(contact_status, many=True)
+        logger.info('GET Contact status success')
+        return response.get_success_200('Contact status loaded successfully', serializer.data)
+
+    def add_question_response(self, data):
+        for i in data:
+            customer = Customer.objects.get_by_id(i['customer'])
+            question = Question.objects.get_by_id(i['question'])
+            option = QuestionOption.objects.get_by_id(i['option'])
+            CustomerAnswers.objects.create(customer=customer, question=question, option=option)
+        return response.post_success('Answers added successfully')

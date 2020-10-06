@@ -1,5 +1,6 @@
 from django.db import models
 
+from company.models import Branch, Company
 from user.models import User
 from utils.basemanager import BaseManager
 from utils.basemodel import BaseModel
@@ -8,6 +9,7 @@ from utils.basemodel import BaseModel
 class ContactStatus(BaseModel):
     name = models.CharField(max_length=30, null=False, blank=False)
     description = models.CharField(max_length=50, null=True, blank=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
     objects = BaseManager()
 
@@ -18,6 +20,7 @@ class ContactStatus(BaseModel):
 class Group(BaseModel):
     name = models.CharField(max_length=50, null=True, blank=True)
     description = models.TextField(null=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
     objects = BaseManager()
 
@@ -27,7 +30,8 @@ class Group(BaseModel):
 
 class Customer(BaseModel):
     name = models.CharField(max_length=50, null=True, blank=True)
-    group = models.ForeignKey(Group,on_delete=models.DO_NOTHING)
+    group = models.ForeignKey(Group, on_delete=models.DO_NOTHING)
+    branch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING)
     address = models.TextField(null=True)
     phone_number = models.CharField(max_length=20, null=False, blank=True, unique=True)
     email = models.CharField(max_length=150, null=True, blank=True, unique=True)

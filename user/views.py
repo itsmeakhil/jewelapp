@@ -39,6 +39,35 @@ class UserLogin(APIView):
             return response.exception_500(e)
 
 
+@permission_classes((AllowAny,))
+class UserLoginV1(APIView):
+    service = UserLoginService()
+
+    # # API Documentation for User login API
+    # @swagger_auto_schema(
+    #     operation_id='',
+    #     request_body=openapi.Schema(
+    #         type=openapi.TYPE_OBJECT,
+    #         properties={
+    #             'username': openapi.Schema(
+    #                 type=openapi.TYPE_STRING
+    #             ),
+    #             'password':openapi.Schema(type=openapi.TYPE_STRING)
+    #         }
+    #     ),
+    # )
+    def post(self, request):
+        """User Login function"""
+        try:
+            username = request.data.get('username')
+            print('user',username)
+            password = request.data.get('password')
+            return self.service.user_login_v1(username, password)
+        except Exception as e:
+            logger.error(f'Request -- Error : Login in to system {e}')
+            return response.exception_500(e)
+
+
 class UserLogout(APIView):
     """Logout API View"""
     user_service = user_service.UserLoginService()

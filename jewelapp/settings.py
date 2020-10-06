@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'import_export',
     'user',
     'customer',
-    'company'
+    'company',
+    'questions'
 
 ]
 
@@ -84,8 +85,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',)
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.IsAuthenticated',)
 }
 
 WSGI_APPLICATION = 'jewelapp.wsgi.application'
