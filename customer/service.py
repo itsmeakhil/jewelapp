@@ -12,21 +12,24 @@ class CustomerServicetype:
             customer.is_attended = True
             customer.save()
             status = ContactStatus.objects.get(name="Attended")
-            customer_service = CustomerStatusData.objects.create(customer=customer, user=request.user, status=status)
             serializer = CustomerSerializer(customer)
             logger.info('Get customer success')
             return response.get_success_200('Customer details loaded successfully', serializer.data)
         logger.error(' No Customer data found ')
         return response.get_success_message('No data found')
 
-    def update_service_Status(self, data):
-        customer_service = CustomerStatusData.objects.get(customer=data['customer'])
-        if customer_service:
+    def update_service_Status(self, data, user):
+        customer_service_exists = CustomerStatusData.objects.filter(customer=data['customer']).exists()
+        status = ContactStatus.objects.get_by_id(data['status'])
+        if customer_service_exists:
+            customer_service = CustomerStatusData.objects.get(customer=data['customer'])
             status = ContactStatus.objects.get_by_id(data['status'])
             customer_service.status = status
             customer_service.save()
             return response.post_success('Updated Customer Service Status')
-        return response.error_response_400('Error Updating status')
+        customer = Customer.objects.get_by_id(data['customer'])
+        CustomerStatusData.objects.create(customer=customer, user=user, status=status)
+        return response.post_success('Added Customer Status Data')
 
     def get_contact_status(self, company):
         contact_status = ContactStatus.objects.filter(company=company)

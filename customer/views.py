@@ -40,7 +40,7 @@ class UpdateCustomerStatus(APIView):
 
     def post(self, request):
         try:
-            return self.service.update_service_Status(data=request.data)
+            return self.service.update_service_Status(data=request.data, user=request.user)
         except Exception as e:
             logger.error(f'Request -- Error : updating customer status in to system {e}')
             return response.exception_500(e)
