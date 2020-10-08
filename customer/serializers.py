@@ -5,10 +5,15 @@ from customer.models import Customer, ContactStatus
 
 class CustomerSerializer(serializers.ModelSerializer):
     """Serializer for adding Customer"""
+    group_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Customer
-        fields = '__all__'
+        fields = ('name', 'group', 'group_name', 'branch', 'address', 'phone_number', 'email', 'is_attended')
+        read_only_fields = ('group_name',)
+
+    def get_group_name(self, obj):
+        return obj.group.name
 
 
 class ContactStatusSerializer(serializers.ModelSerializer):
