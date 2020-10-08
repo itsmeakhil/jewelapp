@@ -32,7 +32,9 @@ class UserLoginService:
         return response.error_response_404('Unable to find the user')
 
     def user_login_v1(self, username, password):
-        user_exists = User.objects.get(username=username).exists()
+        print('herer')
+        user_exists = User.objects.filter(username=username).exists()
+        print(user_exists)
         # user_auth = authenticate(username=username, password=password)
         # print('user auth', user_auth)
         if user_exists:
