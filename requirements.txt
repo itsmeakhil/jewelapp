@@ -44,3 +44,4 @@ xlrd==1.2.0
 xlwt==1.3.0
 gunicorn==20.0.4
 martor
+django-cors-headers==3.3.0

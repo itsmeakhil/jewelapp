@@ -16,6 +16,7 @@ SECRET_KEY = 'xl-u&drc97jxl7j(=po=@x#wjv@r5ch($4tfu(az10z75v_pv='
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 
@@ -40,6 +41,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'drf_yasg',
     'import_export',
+    'corsheaders',
+
     'user',
     'customer',
     'company',
