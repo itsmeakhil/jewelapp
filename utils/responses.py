@@ -12,8 +12,8 @@ def get_success_message(message):
                     status=status.HTTP_200_OK)
 
 
-def set_response(message, status):
-    return Response({'message': message, 'status': status},
+def set_response(message, code):
+    return Response({'message': message, 'status': code},
                     status=status.HTTP_200_OK)
 
 
