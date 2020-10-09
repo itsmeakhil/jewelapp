@@ -26,10 +26,17 @@ class UserLoginService:
                 }
                 logger.info('User login Success')
                 return response.get_success_200('User verification successful', data)
-            return response.error_response_404(
-                'Email or Password is incorrect, please check the password and try again')
+            data = {
+                "status": 400,
+                "message": 'Email or Password is incorrect, please check the password and try again'
+            }
+            return response.get_success_200(data)
         logger.error(' The employee id or password you entered is incorrect ')
-        return response.error_response_404('Unable to find the user')
+        data = {
+            "status": 400,
+            "message": 'Unable to find the user'
+        }
+        return response.get_success_200(data)
 
     def user_login_v1(self, username, password):
         print('herer')
