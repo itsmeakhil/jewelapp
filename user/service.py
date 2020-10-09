@@ -26,17 +26,10 @@ class UserLoginService:
                 }
                 logger.info('User login Success')
                 return response.get_success_200('User verification successful', data)
-            data = {
-                "status": 400,
-                "message": 'Email or Password is incorrect, please check the password and try again'
-            }
-            return response.get_success_200(data)
+            return response.error_response_404(
+                'Email or Password is incorrect, please check the password and try again')
         logger.error(' The employee id or password you entered is incorrect ')
-        data = {
-            "status": 400,
-            "message": 'Unable to find the user'
-        }
-        return response.get_success_200(data)
+        return response.error_response_404('Unable to find the user')
 
     def user_login_v1(self, username, password):
         print('herer')
@@ -55,9 +48,17 @@ class UserLoginService:
                 }
                 logger.info('User login Success')
                 return response.get_success_200('User login successful', data)
-            return response.error_response_400(' Password is incorrect, please check the password and try again')
+            data = {
+                "status": 400,
+                "message": ' Password is incorrect, please check the password and try again'
+            }
+            return response.get_success_message(data)
+        data = {
+            "status": 400,
+            "message": 'Unable to find the user, Please check the username and try again'
+        }
         logger.error(' The employee id or password you entered is incorrect ')
-        return response.error_response_400('Unable to find the user, Please check the username and try again')
+        return response.get_success_message(data)
 
     def logout(self, request, ip):
         """Function to logout the current user"""
