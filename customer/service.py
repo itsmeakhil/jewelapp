@@ -31,8 +31,8 @@ class CustomerServicetype:
         CustomerStatusData.objects.create(customer=customer, user=user, status=status)
         return response.post_success('Added Customer Status Data')
 
-    def get_contact_status(self, company):
-        contact_status = ContactStatus.objects.filter(company=company)
+    def get_contact_status(self):
+        contact_status = ContactStatus.objects.get_all_active()
         serializer = ContactStatusSerializer(contact_status, many=True)
         logger.info('GET Contact status success')
         return response.get_success_200('Contact status loaded successfully', serializer.data)

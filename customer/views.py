@@ -28,8 +28,7 @@ class GetContactStatus(APIView):
     def get(self, request):
         """User Login function"""
         try:
-            company = request.GET.get('company')
-            return self.service.get_contact_status(company)
+            return self.service.get_contact_status()
         except Exception as e:
             logger.error(f'Request -- Error : Login in to system {e}')
             return response.exception_500(e)
