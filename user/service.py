@@ -48,9 +48,9 @@ class UserLoginService:
                 }
                 logger.info('User login Success')
                 return response.get_success_200('User login successful', data)
-            return response.error_response_404(' Password is incorrect, please check the password and try again')
+            return response.error_response_400(' Password is incorrect, please check the password and try again')
         logger.error(' The employee id or password you entered is incorrect ')
-        return response.error_response_404('Unable to find the user, Please check the username and try again')
+        return response.error_response_400('Unable to find the user, Please check the username and try again')
 
     def logout(self, request, ip):
         """Function to logout the current user"""
