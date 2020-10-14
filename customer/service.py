@@ -47,28 +47,36 @@ class CustomerServicetype:
             CustomerAnswers.objects.create(customer=customer, question=question, option=option)
         return response.post_success('Answers added successfully')
 
+    def add_answer(self, data):
+        # customer = Customer.objects.get_by_id(data['customer'])
+        # question = Question.objects.get_by_id(data['question'])
+        # option = QuestionOption.objects.get_by_id(data['option'])
+        if CustomerAnswers.objects.filter(customer=data['customer'], question=data['question']).exists():
+            answer = CustomerAnswers.objects.get(customer=data['customer'], question=data['question'])
+            answer.option = data['option']
+            answer.save()
+            return response.put_success_message('Answer updated successfully')
+        CustomerAnswers.objects.create(customer=data['customer'], question=data['question'], option=data['option'])
+        return response.get_success_message('Answer added successfully')
+
     def add_customers(self, request):
         file = request.FILES['file']
         if file:
-            print(file)
             excel_data_df = pandas.read_excel(file, sheet_name='Sheet1')
-            # print whole sheet data
             data = excel_data_df.to_dict(orient='record')
-
             for i in data:
-
                 if i['phone_number']:
                     print(i['phone_number'])
                     if i['mobile_number'] == 'nan':
-                        i['mobile_number'] = None
+                        i['mobile_number'] = ' '
                     if i['phone_res'] == 'nan':
-                        i['phone_res'] = None
+                        i['phone_res'] = ' '
                     phone_number_exists = Customer.objects.filter(phone_number=i['phone_number']).exists()
                     if not phone_number_exists:
                         cus = Customer.objects.create(name=i['name'], code=i['code'],
                                                       mobile_number=i['mobile_number'],
                                                       phone_number=i['phone_number'], phone_res=i['phone_res'])
-                        logger.info(f'Customer Details added : {cus.name}',)
+                        logger.info(f'Customer Details added : {cus.name}', )
                         print('Added value : ', cus.name)
 
             return response.post_success('Data added successfully')

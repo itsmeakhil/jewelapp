@@ -1,13 +1,9 @@
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
-from utils import responses as response, logger
-from utils.utils import get_client_ip
 from customer import service as customer_service
-from user.models import User
+from utils import responses as response, logger
 
 
 class GetCustomer(APIView):
@@ -20,6 +16,7 @@ class GetCustomer(APIView):
         except Exception as e:
             logger.error(f'Request -- Error : Login in to system {e}')
             return response.exception_500(e)
+
 
 @permission_classes((AllowAny,))
 class GetContactStatus(APIView):
@@ -55,6 +52,8 @@ class AddQuestionAnswer(APIView):
             logger.error(f'Request -- Error : Question answer in to system {e}')
             return response.exception_500(e)
 
+
+@permission_classes((AllowAny,))
 class AddBulkCustomers(APIView):
     service = customer_service.CustomerServicetype()
 
