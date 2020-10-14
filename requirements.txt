@@ -15,13 +15,16 @@ django-jet==1.0.8
 djangorestframework==3.11.0
 drf-yasg==1.17.1
 et-xmlfile==1.0.1
+gunicorn==20.0.4
 idna==2.9
 inflection==0.4.0
 itypes==1.2.0
 jdcal==1.4.1
 Jinja2==2.11.2
+Markdown==3.3.1
 MarkupPy==1.14
 MarkupSafe==1.1.1
+martor==1.5.6
 numpy==1.19.2
 odfpy==1.4.1
 openpyxl==3.0.3
