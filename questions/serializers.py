@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from customer.models import Customer
 from questions.models import Question, QuestionOption
 
 
@@ -16,7 +15,8 @@ class GetQuestionSerializer(serializers.ModelSerializer):
     def get_options(self, obj):
         data = QuestionOption.objects.filter(question=obj.id).exists()
         if data:
-            data = QuestionOptionSerializer(data, many=True)
+            options = QuestionOption.objects.get_by_filter(question=obj.id)
+            data = QuestionOptionSerializer(options, many=True)
             return data.data
         return ''
 
