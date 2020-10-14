@@ -97,9 +97,9 @@ REST_FRAMEWORK = {
 WSGI_APPLICATION = 'jewelapp.wsgi.application'
 
 # Database
-SQLITE = True
+SQLITE = False
 LOCAL_POSTGRESQL = False
-ON_HEROKU = False
+ON_HEROKU = True
 DATABASES = {}
 
 if SQLITE:
