@@ -11,9 +11,8 @@ class CustomerServicetype:
     def get_customer(self, request):
         if Customer.objects.filter(is_attended=False).exists():
             customer = Customer.objects.get_by_filter(is_attended=False)[0]
-            # customer.is_attended = True
-            # customer.save()
-            # status = ContactStatus.objects.get(name="Attended")
+            customer.is_attended = True
+            customer.save()
             serializer = CustomerSerializer(customer)
             logger.info('Get customer success')
             return response.get_success_200('Customer details loaded successfully', serializer.data)
