@@ -23,7 +23,7 @@ class CustomerAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     exclude = ['is_delete', 'is_active']
     fieldsets = (
         (None, {
-            'fields': ('name', 'phone_number', 'email', 'is_attended', 'group', 'branch','address')
+            'fields': ('name', 'phone_number', 'email','mobile_number','phone_res', 'is_attended', 'group','address')
         }),
     )
 

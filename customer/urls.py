@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^contact-status/$', views.GetContactStatus.as_view(), name='contact'),
     url(r'^status/update/$', views.UpdateCustomerStatus.as_view(), name='Update_status'),
     url(r'^add-answer/$', views.AddQuestionAnswer.as_view(), name='add_answer'),
+    url(r'^files/$', views.AddBulkCustomers.as_view(), name='files'),
 ]

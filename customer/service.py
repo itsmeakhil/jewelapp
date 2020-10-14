@@ -1,7 +1,9 @@
-from questions.models import CustomerAnswers, Question, QuestionOption
-from utils import responses as response, constants, logger
+import pandas
+
 from customer.models import Customer, CustomerStatusData, ContactStatus
 from customer.serializers import CustomerSerializer, ContactStatusSerializer
+from questions.models import CustomerAnswers, Question, QuestionOption
+from utils import responses as response, logger
 
 
 class CustomerServicetype:
@@ -44,3 +46,17 @@ class CustomerServicetype:
             option = QuestionOption.objects.get_by_id(i['option'])
             CustomerAnswers.objects.create(customer=customer, question=question, option=option)
         return response.post_success('Answers added successfully')
+
+    def add_customers(self, request):
+        file = request.FILES['file']
+        if file:
+            excel_data_df = pandas.read_excel(file, sheet_name='Sheet1')
+            # print whole sheet data
+            data = excel_data_df.to_json(orient='records')
+            for i in data:
+                mobile_no_exists = Customer.objects.filter(mobile_number=i['mobile_number']).exists()
+                phone_number_exists = Customer.objects.filter(phone_number=i['phone_number']).exists()
+                phone_res_exists = Customer.objects.filter(phone_res=i['phone_res']).exists()
+                if not mobile_no_exists and not phone_number_exists and not phone_res_exists:
+                    Customer.objects.create(name=i['name'], code=i['code'], mobile_number=i['mobile_number'],
+                                            phone_number=i['phone_number'], phone_res=i['phone_res'])

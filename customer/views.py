@@ -54,3 +54,13 @@ class AddQuestionAnswer(APIView):
         except Exception as e:
             logger.error(f'Request -- Error : Question answer in to system {e}')
             return response.exception_500(e)
+
+class AddBulkCustomers(APIView):
+    service = customer_service.CustomerServicetype()
+
+    def post(self, request):
+        try:
+            return self.service.add_customers(request)
+        except Exception as e:
+            logger.error(f'Request -- Error : Question answer in to system {e}')
+            return response.exception_500(e)
