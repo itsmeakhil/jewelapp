@@ -26,7 +26,7 @@ class CustomerServicetype:
             status = ContactStatus.objects.get_by_id(data['status'])
             customer_service.status = status
             customer_service.save()
-            return response.post_success('Updated Customer Service Status')
+            return response.put_success_message('Updated Customer Service Status')
         customer = Customer.objects.get_by_id(data['customer'])
         CustomerStatusData.objects.create(customer=customer, user=user, status=status)
         return response.post_success('Added Customer Status Data')

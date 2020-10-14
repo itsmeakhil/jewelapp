@@ -21,7 +21,7 @@ class GetCustomer(APIView):
             logger.error(f'Request -- Error : Login in to system {e}')
             return response.exception_500(e)
 
-
+@permission_classes((AllowAny,))
 class GetContactStatus(APIView):
     service = customer_service.CustomerServicetype()
 
