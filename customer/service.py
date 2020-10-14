@@ -50,16 +50,25 @@ class CustomerServicetype:
     def add_customers(self, request):
         file = request.FILES['file']
         if file:
+            print(file)
             excel_data_df = pandas.read_excel(file, sheet_name='Sheet1')
             # print whole sheet data
-            data = excel_data_df.to_json(orient='records')
+            data = excel_data_df.to_dict(orient='record')
+
             for i in data:
-                mobile_no_exists = Customer.objects.filter(mobile_number=i['mobile_number']).exists()
-                phone_number_exists = Customer.objects.filter(phone_number=i['phone_number']).exists()
-                phone_res_exists = Customer.objects.filter(phone_res=i['phone_res']).exists()
-                if not mobile_no_exists and not phone_number_exists and not phone_res_exists:
-                    cus = Customer.objects.create(name=i['name'], code=i['code'], mobile_number=i['mobile_number'],
-                                                  phone_number=i['phone_number'], phone_res=i['phone_res'])
-                    print('Added value : ', cus.name)
+
+                if i['phone_number']:
+                    print(i['phone_number'])
+                    if i['mobile_number'] == 'nan':
+                        i['mobile_number'] = None
+                    if i['phone_res'] == 'nan':
+                        i['phone_res'] = None
+                    phone_number_exists = Customer.objects.filter(phone_number=i['phone_number']).exists()
+                    if not phone_number_exists:
+                        cus = Customer.objects.create(name=i['name'], code=i['code'],
+                                                      mobile_number=i['mobile_number'],
+                                                      phone_number=i['phone_number'], phone_res=i['phone_res'])
+                        logger.info(f'Customer Details added : {cus.name}',)
+                        print('Added value : ', cus.name)
 
             return response.post_success('Data added successfully')

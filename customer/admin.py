@@ -1,8 +1,8 @@
 from django.contrib import admin
-from customer.models import Customer, CustomerStatusData, ContactStatus, Group
 from import_export import resources
-
 from import_export.admin import ImportExportModelAdmin
+
+from customer.models import Customer, CustomerStatusData, ContactStatus, Group
 
 
 class CustomerResource(resources.ModelResource):
@@ -16,14 +16,14 @@ class CustomerAdmin(ImportExportModelAdmin, admin.ModelAdmin):
      Register the UserType class in django admin.
     """
 
-    list_display = ('name', 'phone_number', 'email', 'group')
+    list_display = ('name', 'phone_number', 'mobile_number', 'phone_res', 'email', 'group')
     search_fields = ('name', 'phone_number')
-    ordering = ('created_at',)
+    ordering = ('name',)
     list_filter = ('name', 'created_at', 'group',)
     exclude = ['is_delete', 'is_active']
     fieldsets = (
         (None, {
-            'fields': ('name', 'phone_number', 'email','mobile_number','phone_res', 'is_attended', 'group','address')
+            'fields': ('name', 'phone_number', 'email', 'mobile_number', 'phone_res', 'is_attended', 'group', 'address')
         }),
     )
 

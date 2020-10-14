@@ -31,11 +31,11 @@ class Group(BaseModel):
 class Customer(BaseModel):
     name = models.CharField(max_length=50, null=True, blank=True)
     code = models.CharField(max_length=50, null=True, blank=True)
-    group = models.ForeignKey(Group, on_delete=models.DO_NOTHING,null=True,default=1)
-    address = models.TextField(null=True,blank=True)
-    phone_number = models.CharField(max_length=20, null=False, blank=True, unique=True)
-    phone_res = models.CharField(max_length=20, null=False, blank=True, unique=True)
-    mobile_number = models.CharField(max_length=20, null=False, blank=True, unique=True)
+    group = models.ForeignKey(Group, on_delete=models.DO_NOTHING, null=True, default=1)
+    address = models.TextField(null=True, blank=True)
+    phone_number = models.CharField(max_length=20, null=False, blank=True)
+    phone_res = models.CharField(max_length=20, null=False, blank=True)
+    mobile_number = models.CharField(max_length=20, null=False, blank=True, )
     email = models.CharField(max_length=150, null=True, blank=True, unique=True)
     is_attended = models.BooleanField(default=False)
 
