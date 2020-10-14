@@ -1,13 +1,14 @@
 from questions.models import Question
-from questions.serializers import GetQuestionSerializer
-from utils import responses as response, logger
+from utils import responses as response, constants, logger
+from customer.models import Customer, CustomerStatusData, ContactStatus
+from questions.serializers import GetQuestionSerializer, QuestionOptionSerializer
 
 
 class QuestionService:
 
-    def get_question(self):
-        if Question.objects.filter().exists():
-            question = Question.objects.get_all_active()
+    def get_question(self, company):
+        if Question.objects.filter(company=company).exists():
+            question = Question.objects.get_by_filter(company=company)
             serializer = GetQuestionSerializer(question, many=True)
             logger.info('GET Questions success')
             return response.get_success_200('Questions  loaded successfully', serializer.data)

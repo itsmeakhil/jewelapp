@@ -16,8 +16,9 @@ class GetQuestions(APIView):
     def get(self, request):
         """User Login function"""
         try:
+            company = request.GET.get('company')
             ip = get_client_ip(request)
-            return self.service.get_question()
+            return self.service.get_question(company)
         except Exception as e:
             logger.error(f'Request -- Error : Login in to system {e}')
             return response.exception_500(e)
