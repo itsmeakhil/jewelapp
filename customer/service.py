@@ -58,5 +58,8 @@ class CustomerServicetype:
                 phone_number_exists = Customer.objects.filter(phone_number=i['phone_number']).exists()
                 phone_res_exists = Customer.objects.filter(phone_res=i['phone_res']).exists()
                 if not mobile_no_exists and not phone_number_exists and not phone_res_exists:
-                    Customer.objects.create(name=i['name'], code=i['code'], mobile_number=i['mobile_number'],
-                                            phone_number=i['phone_number'], phone_res=i['phone_res'])
+                    cus = Customer.objects.create(name=i['name'], code=i['code'], mobile_number=i['mobile_number'],
+                                                  phone_number=i['phone_number'], phone_res=i['phone_res'])
+                    print('Added value : ', cus.name)
+
+            return response.post_success('Data added successfully')
