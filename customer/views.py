@@ -47,7 +47,7 @@ class AddQuestionAnswer(APIView):
 
     def post(self, request):
         try:
-            return self.service.add_question_response(data=request.data.get('answer'))
+            return self.service.add_answer(data=request.data)
         except Exception as e:
             logger.error(f'Request -- Error : Question answer in to system {e}')
             return response.exception_500(e)
