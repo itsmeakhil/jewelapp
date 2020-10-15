@@ -47,15 +47,15 @@ class CustomerServicetype:
         return response.post_success('Answers added successfully')
 
     def add_answer(self, data):
-        # customer = Customer.objects.get_by_id(data['customer'])
-        # question = Question.objects.get_by_id(data['question'])
-        # option = QuestionOption.objects.get_by_id(data['option'])
+        customer = Customer.objects.get_by_id(data['customer'])
+        question = Question.objects.get_by_id(data['question'])
+        option = QuestionOption.objects.get_by_id(data['option'])
         if CustomerAnswers.objects.filter(customer=data['customer'], question=data['question']).exists():
             answer = CustomerAnswers.objects.get(customer=data['customer'], question=data['question'])
-            answer.option = data['option']
+            answer.option = option.id
             answer.save()
             return response.put_success_message('Answer updated successfully')
-        CustomerAnswers.objects.create(customer=data['customer'], question=data['question'], option=data['option'])
+        CustomerAnswers.objects.create(customer=customer, question=question, option=option)
         return response.get_success_message('Answer added successfully')
 
     def add_customers(self, request):
