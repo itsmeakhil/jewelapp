@@ -49,15 +49,16 @@ class CustomerServicetype:
     def add_answer(self, data):
         customer = Customer.objects.get_by_id(data['customer'])
         question = Question.objects.get_by_id(data['question'])
-        option = QuestionOption.objects.get_by_id(data['option'])
         if not data['option']:
             CustomerAnswers.objects.get(customer=data['customer'], question=data['question']).delete()
             return response.get_success_message('Response deleted')
         if CustomerAnswers.objects.filter(customer=data['customer'], question=data['question']).exists():
+            option = QuestionOption.objects.get_by_id(data['option'])
             answer = CustomerAnswers.objects.get(customer=data['customer'], question=data['question'])
             answer.option = option
             answer.save()
             return response.put_success_message('Answer updated successfully')
+        option = QuestionOption.objects.get_by_id(data['option'])
         CustomerAnswers.objects.create(customer=customer, question=question, option=option)
         return response.get_success_message('Answer added successfully')
 
