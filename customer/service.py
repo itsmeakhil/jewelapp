@@ -50,6 +50,9 @@ class CustomerServicetype:
         customer = Customer.objects.get_by_id(data['customer'])
         question = Question.objects.get_by_id(data['question'])
         option = QuestionOption.objects.get_by_id(data['option'])
+        if not data['option']:
+            CustomerAnswers.objects.get(customer=data['customer'], question=data['question']).delete()
+            return response.get_success_message('Response deleted')
         if CustomerAnswers.objects.filter(customer=data['customer'], question=data['question']).exists():
             answer = CustomerAnswers.objects.get(customer=data['customer'], question=data['question'])
             answer.option = option
