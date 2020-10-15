@@ -52,7 +52,7 @@ class CustomerServicetype:
         option = QuestionOption.objects.get_by_id(data['option'])
         if CustomerAnswers.objects.filter(customer=data['customer'], question=data['question']).exists():
             answer = CustomerAnswers.objects.get(customer=data['customer'], question=data['question'])
-            answer.option = option.id
+            answer.option = option
             answer.save()
             return response.put_success_message('Answer updated successfully')
         CustomerAnswers.objects.create(customer=customer, question=question, option=option)
