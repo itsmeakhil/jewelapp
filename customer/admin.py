@@ -28,7 +28,22 @@ class CustomerAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     )
 
 
-admin.site.register(Group)
+@admin.register(Group)
+class ContactStatusAdmin(admin.ModelAdmin):
+    """
+     Register the UserType class in django admin.
+    """
+
+    list_display = ('id', 'name',)
+    search_fields = ('name',)
+    ordering = ('created_at',)
+    list_filter = ('name', 'created_at',)
+    exclude = ['is_delete', 'is_active']
+    fieldsets = (
+        (None, {
+            'fields': ('name',)
+        }),
+    )
 
 
 @admin.register(ContactStatus)
