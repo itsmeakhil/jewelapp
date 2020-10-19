@@ -1,6 +1,6 @@
 import pandas
 
-from customer.models import Customer, CustomerStatusData, ContactStatus
+from customer.models import CustomerStatusData, ContactStatus, Group, Customer
 from customer.serializers import CustomerSerializer, ContactStatusSerializer
 from questions.models import CustomerAnswers, Question, QuestionOption
 from utils import responses as response, logger
@@ -75,10 +75,13 @@ class CustomerServicetype:
                     if i['phone_res'] == 'nan':
                         i['phone_res'] = ' '
                     phone_number_exists = Customer.objects.filter(phone_number=i['phone_number']).exists()
+
                     if not phone_number_exists:
+                        group = Group.objects.get_by_id(int(i['group']))
                         cus = Customer.objects.create(name=i['name'], code=i['code'],
                                                       mobile_number=i['mobile_number'],
-                                                      phone_number=i['phone_number'], phone_res=i['phone_res'])
+                                                      phone_number=i['phone_number'], phone_res=i['phone_res'],
+                                                      group=group)
                         logger.info(f'Customer Details added : {cus.name}', )
                         print('Added value : ', cus.name)
 
