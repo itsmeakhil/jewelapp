@@ -38,7 +38,6 @@ class Customer(BaseModel):
     mobile_number = models.CharField(max_length=20, null=False, blank=True, )
     email = models.CharField(max_length=150, null=True, blank=True, unique=True)
     is_attended = models.BooleanField(default=False)
-
     objects = BaseManager()
 
     def __str__(self):

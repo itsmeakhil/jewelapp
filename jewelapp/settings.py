@@ -99,7 +99,8 @@ WSGI_APPLICATION = 'jewelapp.wsgi.application'
 # Database
 SQLITE = False
 LOCAL_POSTGRESQL = False
-ON_HEROKU = True
+ON_HEROKU = False
+ON_DEV= True
 DATABASES = {}
 
 if SQLITE:
@@ -114,7 +115,17 @@ elif ON_HEROKU:
                                                   ssl_require=True)
     django_heroku.settings(locals())
 
-
+elif ON_DEV:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'jewelapp',
+            'USER': 'postgres',
+            'PASSWORD': 'jewelapp',
+            'HOST': '127.0.0.1',
+            'PORT': '5432',
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {

@@ -11,8 +11,6 @@ class CustomerServicetype:
     def get_customer(self, request):
         if Customer.objects.filter(is_attended=False).exists():
             customer = Customer.objects.get_by_filter(is_attended=False)[0]
-            customer.is_attended = True
-            customer.save()
             serializer = CustomerSerializer(customer)
             logger.info('Get customer success')
             return response.get_success_200('Customer details loaded successfully', serializer.data)
@@ -22,13 +20,16 @@ class CustomerServicetype:
     def update_service_Status(self, data, user):
         customer_service_exists = CustomerStatusData.objects.filter(customer=data['customer']).exists()
         status = ContactStatus.objects.get_by_id(data['status'])
+        customer = Customer.objects.get_by_id(data['customer'])
         if customer_service_exists:
             customer_service = CustomerStatusData.objects.get(customer=data['customer'])
             status = ContactStatus.objects.get_by_id(data['status'])
             customer_service.status = status
+            customer_service.user = user
             customer_service.save()
+            customer.is_attended = True
+            customer.save()
             return response.put_success_message('Updated Customer Service Status')
-        customer = Customer.objects.get_by_id(data['customer'])
         CustomerStatusData.objects.create(customer=customer, user=user, status=status)
         return response.post_success('Added Customer Status Data')
 
