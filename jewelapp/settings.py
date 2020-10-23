@@ -1,7 +1,8 @@
 import os
 from pathlib import Path
-# import dj_database_url
-# import django_heroku
+
+import dj_database_url
+import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +21,11 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_WHITELIST = ['http://*']
 
-
 """
 Uncomment below two lines to use heroku database in local. and change ON_HEROKU to True
 # """
-# DATABASE_URL = 'postgres://mzvhbynwngunpj:2e05944fedeaf12f1a2193928890be393b71f8b74b406afeced59bf89cdef576@ec2-18-211-48-247.compute-1.amazonaws.com:5432/d1adabm9utkhr4'
-# os.environ.__setitem__('DATABASE_URL', DATABASE_URL)
-
+DATABASE_URL = 'postgres://mzvhbynwngunpj:2e05944fedeaf12f1a2193928890be393b71f8b74b406afeced59bf89cdef576@ec2-18-211-48-247.compute-1.amazonaws.com:5432/d1adabm9utkhr4'
+os.environ.__setitem__('DATABASE_URL', DATABASE_URL)
 
 # Application definition
 
@@ -100,7 +99,7 @@ WSGI_APPLICATION = 'jewelapp.wsgi.application'
 SQLITE = False
 LOCAL_POSTGRESQL = False
 ON_HEROKU = False
-ON_DEV= True
+ON_DEV = True
 DATABASES = {}
 
 if SQLITE:
@@ -110,10 +109,10 @@ if SQLITE:
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
-# elif ON_HEROKU:
-#     DATABASES['default'] = dj_database_url.config(conn_max_age=600,
-#                                                   ssl_require=True)
-#     django_heroku.settings(locals())
+elif ON_HEROKU:
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600,
+                                                  ssl_require=True)
+    django_heroku.settings(locals())
 
 elif ON_DEV:
     DATABASES = {
@@ -121,9 +120,9 @@ elif ON_DEV:
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'jewelapp',
             'USER': 'postgres',
-            'PASSWORD': 'jewelapp',
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
+            'PASSWORD': 'password',
+            'HOST': 'psql-db.dev.wecodelife.com',
+            'PORT': '26114',
         }
     }
 
