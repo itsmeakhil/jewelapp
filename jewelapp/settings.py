@@ -15,6 +15,7 @@ SECRET_KEY = 'xl-u&drc97jxl7j(=po=@x#wjv@r5ch($4tfu(az10z75v_pv='
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+ALLOWED_HOSTS = ['*']
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
