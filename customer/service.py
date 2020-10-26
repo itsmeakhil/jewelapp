@@ -1,6 +1,8 @@
+import math
+
 import pandas
 
-from customer.models import CustomerStatusData, ContactStatus, Group, Customer
+from customer.models import CustomerStatusData, ContactStatus, Customer
 from customer.serializers import CustomerSerializer, ContactStatusSerializer
 from questions.models import CustomerAnswers, Question, QuestionOption
 from utils import responses as response, logger
@@ -70,20 +72,34 @@ class CustomerServicetype:
             data = excel_data_df.to_dict(orient='record')
             for i in data:
                 if i['phone_number']:
-                    print(i['phone_number'])
-                    if i['mobile_number'] == 'nan':
+                    print(i)
+                    if not math.isnan(i['mobile_number']):
+                        i['mobile_number'] = int(i['mobile_number'])
+                    else:
                         i['mobile_number'] = ' '
-                    if i['phone_res'] == 'nan':
+
+                    if not math.isnan(i['phone_res']):
+                        i['phone_res'] = int(i['phone_res'])
+                    else:
                         i['phone_res'] = ' '
                     phone_number_exists = Customer.objects.filter(phone_number=i['phone_number']).exists()
 
                     if not phone_number_exists:
-                        group = Group.objects.get_by_id(int(i['group']))
-                        cus = Customer.objects.create(name=i['name'], code=i['code'],
-                                                      mobile_number=i['mobile_number'],
-                                                      phone_number=i['phone_number'], phone_res=i['phone_res'],
-                                                      group=group)
-                        logger.info(f'Customer Details added : {cus.name}', )
-                        print('Added value : ', cus.name)
+                        i['group'] = int(i['group'])
+                        print(i['group'])
+                        serializer = CustomerSerializer(data=i,many=False)
+                        print(serializer.is_valid())
+                        if serializer.is_valid():
+                            serializer.save()
+
+                            #
+                            # cus = Customer.objects.create(name=i['name'], code=i['code'],
+                            #                               mobile_number=int(i['mobile_number']),
+                            #                               phone_number=int(i['phone_number']),
+                            #                               phone_res=int(i['phone_res']),
+                            #                               group=group)
+                            logger.info(f'Customer Details added : {serializer.data}', )
+                            print('Added value : ', serializer.data)
+                        print(serializer.errors)
 
             return response.post_success('Data added successfully')

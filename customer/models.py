@@ -36,15 +36,13 @@ class Customer(BaseModel):
     phone_number = models.CharField(max_length=20, null=False, blank=True)
     phone_res = models.CharField(max_length=20, null=False, blank=True)
     mobile_number = models.CharField(max_length=20, null=False, blank=True, )
-    email = models.CharField(max_length=150, null=True, blank=True, unique=True)
+    email = models.CharField(max_length=150, null=True, blank=True)
     is_attended = models.BooleanField(default=False)
     objects = BaseManager()
 
     def __str__(self):
         return self.phone_number
 
-    class Meta(object):
-        unique_together = (('phone_number', 'email'),)
 
 
 class CustomerStatusData(BaseModel):

@@ -9,8 +9,9 @@ class CustomerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Customer
-        fields = ('id', 'name', 'group', 'group_name', 'address', 'phone_number', 'phone_res', 'mobile_number', 'email',
-                  'is_attended')
+        fields = (
+        'id', 'name', 'group', 'code', 'group_name', 'address', 'phone_number', 'phone_res', 'mobile_number', 'email',
+        'is_attended')
         read_only_fields = ('group_name',)
 
     def get_group_name(self, obj):
