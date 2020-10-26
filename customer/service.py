@@ -87,7 +87,7 @@ class CustomerServicetype:
                     if not phone_number_exists:
                         i['group'] = int(i['group'])
                         print(i['group'])
-                        serializer = CustomerSerializer(data=i,many=False)
+                        serializer = CustomerSerializer(data=i)
                         print(serializer.is_valid())
                         if serializer.is_valid():
                             serializer.save()
