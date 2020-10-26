@@ -17,6 +17,17 @@ class ContactStatus(BaseModel):
         return self.name
 
 
+class PhoneNumberStatus(BaseModel):
+    name = models.CharField(max_length=30, null=False, blank=False)
+    description = models.CharField(max_length=50, null=True, blank=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+
+    objects = BaseManager()
+
+    def __str__(self):
+        return self.name
+
+
 class Group(BaseModel):
     name = models.CharField(max_length=50, null=True, blank=True)
     description = models.TextField(null=True)
@@ -28,31 +39,48 @@ class Group(BaseModel):
         return self.name
 
 
-class Customer(BaseModel):
+class Area(BaseModel):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+
+    objects = BaseManager()
+
+    def __str__(self):
+        return self.name
+
+
+
+class Agent(BaseModel):
     name = models.CharField(max_length=50, null=True, blank=True)
     code = models.CharField(max_length=50, null=True, blank=True)
     group = models.ForeignKey(Group, on_delete=models.DO_NOTHING, null=True, default=1)
+    area = models.ForeignKey(Area, on_delete=models.DO_NOTHING, null=True)
     address = models.TextField(null=True, blank=True)
-    phone_number = models.CharField(max_length=20, null=False, blank=True)
-    phone_res = models.CharField(max_length=20, null=False, blank=True)
-    mobile_number = models.CharField(max_length=20, null=False, blank=True, )
-    email = models.CharField(max_length=150, null=True, blank=True, unique=True)
+    email = models.CharField(max_length=150, null=True, blank=True)
     is_attended = models.BooleanField(default=False)
     objects = BaseManager()
 
     def __str__(self):
-        return self.phone_number
+        return self.name
 
-    class Meta(object):
-        unique_together = (('phone_number', 'email'),)
+class AgentPhoneNumber(BaseModel):
+    phone_number = models.CharField(max_length=50, null=True, blank=True)
+    agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
+    status = models.ForeignKey(PhoneNumberStatus, on_delete=models.DO_NOTHING)
+
+    objects = BaseManager()
+
+    def __str__(self):
+        return self.agent.name
 
 
-class CustomerStatusData(BaseModel):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+
+class AgentStatus(BaseModel):
+    agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     status = models.ForeignKey(ContactStatus, on_delete=models.DO_NOTHING)
 
     objects = BaseManager()
 
     def __str__(self):
-        return self.customer.phone_number
+        return self.agent.name

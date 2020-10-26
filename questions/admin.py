@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from questions.models import Question, QuestionOption, CustomerAnswers
+from questions.models import Question, QuestionOption, AgentAnswers
 
 admin.site.register(Question)
 
@@ -19,14 +19,14 @@ class QuestionOptionAdmin(admin.ModelAdmin):
     exclude = ['is_delete', 'is_active']
 
 
-@admin.register(CustomerAnswers)
-class CustomerAnswersAdmin(admin.ModelAdmin):
+@admin.register(AgentAnswers)
+class AgentAnswerAdmin(admin.ModelAdmin):
     """
      Register the CustomerAnswers class in django admin.
     """
 
-    list_display = ('customer', 'question', 'option')
-    search_fields = ('customer', 'question',)
+    list_display = ('agent', 'question', 'option')
+    search_fields = ('agent', 'question',)
     ordering = ('question',)
-    list_filter = ('question', 'customer',)
+    list_filter = ('question', 'agent',)
     exclude = ['is_delete', 'is_active']

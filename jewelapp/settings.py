@@ -20,7 +20,7 @@ ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ORIGIN_WHITELIST = ['*', 'https://*', 'http://*']
+CORS_ORIGIN_WHITELIST = ['http://*']
 
 """
 Uncomment below two lines to use heroku database in local. and change ON_HEROKU to True
@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'corsheaders',
 
     'user',
-    'customer',
+    'agent',
     'company',
     'questions'
 
@@ -90,17 +90,17 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',)
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.IsAuthenticated',)
 }
 
 WSGI_APPLICATION = 'jewelapp.wsgi.application'
 
 # Database
-SQLITE = False
+SQLITE = True
 LOCAL_POSTGRESQL = False
 ON_HEROKU = False
-ON_DEV = True
+ON_DEV = False
 DATABASES = {}
 
 if SQLITE:
