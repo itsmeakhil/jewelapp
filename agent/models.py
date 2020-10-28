@@ -49,7 +49,6 @@ class Area(BaseModel):
         return self.name
 
 
-
 class Agent(BaseModel):
     name = models.CharField(max_length=50, null=True, blank=True)
     code = models.CharField(max_length=50, null=True, blank=True)
@@ -63,6 +62,7 @@ class Agent(BaseModel):
     def __str__(self):
         return self.name
 
+
 class AgentPhoneNumber(BaseModel):
     phone_number = models.CharField(max_length=50, null=True, blank=True)
     agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
@@ -73,6 +73,16 @@ class AgentPhoneNumber(BaseModel):
     def __str__(self):
         return self.agent.name
 
+
+class AgentRemarks(BaseModel):
+    remarks = models.TextField(null=True, blank=True)
+    agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True, editable=False)
+
+    objects = BaseManager()
+
+    def __str__(self):
+        return self.agent.name
 
 
 class AgentStatus(BaseModel):

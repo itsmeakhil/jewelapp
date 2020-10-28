@@ -1,10 +1,12 @@
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 
-from agent.models import Agent, AgentStatus, ContactStatus, Group, Area, AgentPhoneNumber, PhoneNumberStatus
+from agent.models import Agent, AgentStatus, ContactStatus, Group, Area, AgentPhoneNumber, PhoneNumberStatus, \
+    AgentRemarks
 
 admin.site.register(AgentPhoneNumber)
 admin.site.register(PhoneNumberStatus)
+admin.site.register(AgentRemarks)
 
 
 @admin.register(Agent)

@@ -29,6 +29,7 @@ class GetContactStatus(APIView):
             logger.error(f'Request -- Error : Login in to system {e}')
             return response.exception_500(e)
 
+
 class GetPhoneNumberStatus(APIView):
     service = service.AgentService()
 
@@ -83,4 +84,15 @@ class AddBulkAgents(APIView):
             return self.service.add_agents(request)
         except Exception as e:
             logger.error(f'Request -- Error : Question answer in to system {e}')
+            return response.exception_500(e)
+
+
+class AddAgentsRemarks(APIView):
+    service = service.AgentService()
+
+    def post(self, request):
+        try:
+            return self.service.add_agent_remarks(data=request.data)
+        except Exception as e:
+            logger.error(f'Request -- Error : Adding Agents remarks in to system {e}')
             return response.exception_500(e)

@@ -1,7 +1,7 @@
 from django.db import models
 
-from company.models import Company
 from agent.models import Agent
+from company.models import Company
 from user.models import User
 from utils.basemanager import BaseManager
 from utils.basemodel import BaseModel
@@ -31,6 +31,7 @@ class AgentAnswers(BaseModel):
     agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     option = models.ForeignKey(QuestionOption, on_delete=models.CASCADE)
+    remarks = models.TextField(null=True, blank=True)
 
     objects = BaseManager()
 

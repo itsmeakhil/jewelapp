@@ -1,9 +1,11 @@
 import math
 
 import pandas
+from django.db import transaction
 
 from agent.models import AgentStatus, ContactStatus, Agent, AgentPhoneNumber, PhoneNumberStatus
-from agent.serializers import AgentSerializer, ContactStatusSerializer, PhoneNumberStatusSerializer
+from agent.serializers import AgentSerializer, ContactStatusSerializer, PhoneNumberStatusSerializer, \
+    AgentRemarksSerializer
 from questions.models import AgentAnswers, Question, QuestionOption
 from utils import responses as response, logger, constants
 
@@ -57,40 +59,49 @@ class AgentService:
         return response.error_response_400('Unable to find the Phone number ')
 
     def add_answer(self, data):
-        agent = Agent.objects.get_by_id(data['agent'])
-        question = Question.objects.get_by_id(data['question'])
-        if not data['option']:
-            AgentAnswers.objects.get(agent=data['agent'], question=data['question']).delete()
-            return response.get_success_message('Response deleted')
-        if AgentAnswers.objects.filter(agent=data['agent'], question=data['question']).exists():
+        with transaction.atomic():
+            agent = Agent.objects.get_by_id(data['agent'])
+            question = Question.objects.get_by_id(data['question'])
+            if not data['option']:
+                AgentAnswers.objects.get(agent=data['agent'], question=data['question']).delete()
+                return response.get_success_message('Response deleted')
+            if AgentAnswers.objects.filter(agent=data['agent'], question=data['question']).exists():
+                option = QuestionOption.objects.get_by_id(data['option'])
+                answer = AgentAnswers.objects.get(agent=data['agent'], question=data['question'])
+                answer.option = option
+                if data['remarks']:
+                    answer.remarks = data['remarks']
+                answer.save()
+                return response.put_success_message('Answer updated successfully')
             option = QuestionOption.objects.get_by_id(data['option'])
-            answer = AgentAnswers.objects.get(agent=data['agent'], question=data['question'])
-            answer.option = option
-            answer.save()
-            return response.put_success_message('Answer updated successfully')
-        option = QuestionOption.objects.get_by_id(data['option'])
-        AgentAnswers.objects.create(agent=agent, question=question, option=option)
-        return response.get_success_message('Answer added successfully')
+            AgentAnswers.objects.create(agent=agent, question=question, option=option, remarks=data['remarks'])
+            return response.get_success_message('Answer added successfully')
 
     def add_agents(self, request):
         file = request.FILES['file']
         if file:
             excel_data_df = pandas.read_excel(file, sheet_name='Sheet1')
             data = excel_data_df.to_dict(orient='record')
+            status = PhoneNumberStatus.objects.get(name=constants.ACTIVE)
             for i in data:
                 serializer = AgentSerializer(data=i)
                 if serializer.is_valid():
                     agent = serializer.save()
                 if not math.isnan(i['phone_number1']):
                     if not AgentPhoneNumber.objects.get_by_filter(phone_number=int(i['phone_number1'])).exists():
-                        status = PhoneNumberStatus.objects.get(name=constants.ACTIVE)
                         AgentPhoneNumber.objects.create(agent=agent, phone_number=i['phone_number1'], status=status)
                 if not math.isnan(i['phone_number2']):
                     if not AgentPhoneNumber.objects.get_by_filter(phone_number=int(i['phone_number2'])).exists():
-                        status = PhoneNumberStatus.objects.get(name=constants.ACTIVE)
                         AgentPhoneNumber.objects.create(agent=agent, phone_number=i['phone_number2'], status=status)
                 if not math.isnan(i['phone_number3']):
                     if not AgentPhoneNumber.objects.get_by_filter(phone_number=int(i['phone_number3'])).exists():
-                        status = PhoneNumberStatus.objects.get(name=constants.ACTIVE)
                         AgentPhoneNumber.objects.create(agent=agent, phone_number=i['phone_number3'], status=status)
             return response.post_success('Data added successfully')
+
+    def add_agent_remarks(self, data):
+        with transaction.atomic():
+            serializer = AgentRemarksSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return response.post_success_201('Successfully added Remarks ', serializer.data)
+            return response.serializer_error_400(serializer)

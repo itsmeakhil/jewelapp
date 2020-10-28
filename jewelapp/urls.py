@@ -1,14 +1,8 @@
-from django.conf.urls.static import static
-from django.contrib import admin
-from django.urls import path, include
-
-from jewelapp import settings
-
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import include
-from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 schema_view = get_schema_view(
@@ -30,5 +24,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include('user.urls')),
     url(r'^api/agent/', include('agent.urls')),
+    url(r'^api/customer/', include('customer.urls')),
     url(r'^api/', include('questions.urls'))
 ]

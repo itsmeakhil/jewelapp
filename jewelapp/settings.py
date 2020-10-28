@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'user',
     'agent',
     'company',
-    'questions'
+    'questions',
+    'customer'
 
 ]
 
