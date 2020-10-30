@@ -73,15 +73,16 @@ class CustomerServicetype:
             for i in data:
                 if i['phone_number']:
                     print(i)
-                    if not math.isnan(i['mobile_number']):
-                        i['mobile_number'] = int(i['mobile_number'])
-                    else:
-                        i['mobile_number'] = ' '
-
-                    if not math.isnan(i['phone_res']):
-                        i['phone_res'] = int(i['phone_res'])
-                    else:
-                        i['phone_res'] = ' '
+                    if i['mobile_number']:
+                        if not math.isnan(i['mobile_number']):
+                            i['mobile_number'] = int(i['mobile_number'])
+                        else:
+                            i['mobile_number'] = ' '
+                    if i['phone_res']:
+                        if not math.isnan(i['phone_res']):
+                            i['phone_res'] = int(i['phone_res'])
+                        else:
+                            i['phone_res'] = ' '
                     phone_number_exists = Customer.objects.filter(phone_number=i['phone_number']).exists()
 
                     if not phone_number_exists:
@@ -91,13 +92,6 @@ class CustomerServicetype:
                         print(serializer.is_valid())
                         if serializer.is_valid():
                             serializer.save()
-
-                            #
-                            # cus = Customer.objects.create(name=i['name'], code=i['code'],
-                            #                               mobile_number=int(i['mobile_number']),
-                            #                               phone_number=int(i['phone_number']),
-                            #                               phone_res=int(i['phone_res']),
-                            #                               group=group)
                             logger.info(f'Customer Details added : {serializer.data}', )
                             print('Added value : ', serializer.data)
                         print(serializer.errors)
