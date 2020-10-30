@@ -72,17 +72,17 @@ class CustomerServicetype:
             data = excel_data_df.to_dict(orient='record')
             for i in data:
                 if i['phone_number']:
-                    print(i)
-                    if i['mobile_number']:
-                        if not math.isnan(i['mobile_number']):
-                            i['mobile_number'] = int(i['mobile_number'])
-                        else:
-                            i['mobile_number'] = ' '
-                    if i['phone_res']:
-                        if not math.isnan(i['phone_res']):
-                            i['phone_res'] = int(i['phone_res'])
-                        else:
-                            i['phone_res'] = ' '
+                    # print(i)
+                    # if i['mobile_number']:
+                    #     if not math.isnan(i['mobile_number']):
+                    #         i['mobile_number'] = int(i['mobile_number'])
+                    #     else:
+                    #         i['mobile_number'] = ' '
+                    # if i['phone_res']:
+                    #     if not math.isnan(i['phone_res']):
+                    #         i['phone_res'] = int(i['phone_res'])
+                    #     else:
+                    #         i['phone_res'] = ' '
                     phone_number_exists = Customer.objects.filter(phone_number=i['phone_number']).exists()
 
                     if not phone_number_exists:
