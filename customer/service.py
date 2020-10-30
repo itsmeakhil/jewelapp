@@ -72,25 +72,27 @@ class CustomerServicetype:
             data = excel_data_df.to_dict(orient='record')
             for i in data:
                 if i['phone_number']:
-                    # print(i)
-                    # if i['mobile_number']:
-                    #     if not math.isnan(i['mobile_number']):
-                    #         i['mobile_number'] = int(i['mobile_number'])
-                    #     else:
-                    #         i['mobile_number'] = ' '
-                    # if i['phone_res']:
-                    #     if not math.isnan(i['phone_res']):
-                    #         i['phone_res'] = int(i['phone_res'])
-                    #     else:
-                    #         i['phone_res'] = ' '
+                    print('1')
+                    if i['mobile_number']:
+                        print('11')
+                        if not math.isnan(i['mobile_number']):
+                            i['mobile_number'] = int(i['mobile_number'])
+                        else:
+                            i['mobile_number'] = ' '
+                    if i['phone_res']:
+                        print('111')
+                        if not math.isnan(i['phone_res']):
+                            i['phone_res'] = int(i['phone_res'])
+                        else:
+                            i['phone_res'] = ' '
                     phone_number_exists = Customer.objects.filter(phone_number=i['phone_number']).exists()
 
                     if not phone_number_exists:
-                        i['group'] = int(i['group'])
-                        print(i['group'])
+                        # i['group'] = int(i['group'])
+                        print('1111')
                         serializer = CustomerSerializer(data=i)
-                        print(serializer.is_valid())
                         if serializer.is_valid():
+                            print('11111')
                             serializer.save()
                             logger.info(f'Customer Details added : {serializer.data}', )
                             print('Added value : ', serializer.data)
