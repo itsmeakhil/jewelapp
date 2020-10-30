@@ -1,5 +1,3 @@
-import math
-
 import pandas
 
 from customer.models import CustomerStatusData, ContactStatus, Customer
@@ -72,23 +70,22 @@ class CustomerServicetype:
             data = excel_data_df.to_dict(orient='record')
             for i in data:
                 if i['phone_number']:
-                    print('1')
-                    if i['mobile_number']:
-                        print('11')
-                        if not math.isnan(i['mobile_number']):
-                            i['mobile_number'] = int(i['mobile_number'])
-                        else:
-                            i['mobile_number'] = ' '
-                    if i['phone_res']:
-                        print('111')
-                        if not math.isnan(i['phone_res']):
-                            i['phone_res'] = int(i['phone_res'])
-                        else:
-                            i['phone_res'] = ' '
+                    print('1', type(i['phone_number']))
+                    # if i['mobile_number']:
+                    #     print('11')
+                    #     if not math.isnan(i['mobile_number']):
+                    #         i['mobile_number'] = int(i['mobile_number'])
+                    #     else:
+                    #         i['mobile_number'] = ' '
+                    # if i['phone_res']:
+                    #     print('111')
+                    #     if not math.isnan(i['phone_res']):
+                    #         i['phone_res'] = int(i['phone_res'])
+                    #     else:
+                    #         i['phone_res'] = ' '
                     phone_number_exists = Customer.objects.filter(phone_number=i['phone_number']).exists()
 
                     if not phone_number_exists:
-                        # i['group'] = int(i['group'])
                         print('1111')
                         serializer = CustomerSerializer(data=i)
                         if serializer.is_valid():
