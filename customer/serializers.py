@@ -11,7 +11,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         model = Customer
         fields = (
             'id', 'name', 'group', 'code', 'group_name', 'address', 'phone_number', 'email',
-            'is_attended')
+            'is_attended', 'assigned_to')
         read_only_fields = ('group_name',)
 
     def get_group_name(self, obj):

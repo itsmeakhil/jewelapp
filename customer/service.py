@@ -1,3 +1,5 @@
+import math
+
 import pandas
 
 from customer.models import CustomerStatusData, ContactStatus, Customer
@@ -11,7 +13,10 @@ class CustomerServicetype:
     def get_customer(self, request):
         if Customer.objects.filter(is_attended=False).exists():
             customer = Customer.objects.get_by_filter(is_attended=False)[0]
+            print(customer.name)
             serializer = CustomerSerializer(customer)
+            customer.is_attended = True
+            customer.save()
             logger.info('Get customer success')
             return response.get_success_200('Customer details loaded successfully', serializer.data)
         logger.error(' No Customer data found ')
@@ -69,7 +74,7 @@ class CustomerServicetype:
             excel_data_df = pandas.read_excel(file, sheet_name='Sheet1')
             data = excel_data_df.to_dict(orient='record')
             for i in data:
-                if i['phone_number']:
+                if not math.isnan(i['phone_number']):
                     print('1', type(i['phone_number']))
                     # if i['mobile_number']:
                     #     print('11')
