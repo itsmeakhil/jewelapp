@@ -57,6 +57,7 @@ class Agent(BaseModel):
     address = models.TextField(null=True, blank=True)
     email = models.CharField(max_length=150, null=True, blank=True)
     is_attended = models.BooleanField(default=False)
+    is_assigned = models.BooleanField(default=False)
     objects = BaseManager()
 
     def __str__(self):
@@ -64,7 +65,7 @@ class Agent(BaseModel):
 
 
 class AgentPhoneNumber(BaseModel):
-    phone_number = models.CharField(max_length=50, null=True, blank=True)
+    phone_number = models.BigIntegerField(null=True, blank=True)
     agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
     status = models.ForeignKey(PhoneNumberStatus, on_delete=models.DO_NOTHING)
 

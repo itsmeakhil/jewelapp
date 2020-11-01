@@ -58,7 +58,8 @@ class CustomerService:
                 if data['remarks']:
                     CustomerRemarks.objects.create(customer=customer,remarks=data['remarks'])
                 for i in data['phone_number']:
-                    CustomerPhoneNumber.objects.create(customer=customer, phone_number=i, status=status)
+                    if not CustomerPhoneNumber.objects.filter(phone_number=i).exists():
+                        CustomerPhoneNumber.objects.create(customer=customer, phone_number=i, status=status)
                 return response.get_success_200('Customer Details added successfully', serializer.data)
 
     def add_customer_remarks(self, data):

@@ -23,7 +23,7 @@ class Customer(BaseModel):
 
 
 class CustomerPhoneNumber(BaseModel):
-    phone_number = models.CharField(max_length=50, null=True, blank=True)
+    phone_number = models.BigIntegerField(null=True, blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     status = models.ForeignKey(PhoneNumberStatus, on_delete=models.DO_NOTHING)
 

@@ -13,7 +13,7 @@ class AgentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Agent
         fields = ('id', 'name', 'group', 'area', 'area_name', 'group_name', 'address',
-                  'email', 'is_attended', 'number', 'remarks')
+                  'email', 'is_attended', 'is_assigned', 'number', 'remarks')
         read_only_fields = ('group_name', 'area_name', 'number', 'remarks')
 
     def get_group_name(self, obj):
