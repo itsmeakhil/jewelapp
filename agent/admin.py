@@ -15,14 +15,14 @@ class AgentAdmin(ImportExportModelAdmin, admin.ModelAdmin):
      Register the UserType class in django admin.
     """
 
-    list_display = ('name', 'address', 'email', 'group', 'area')
+    list_display = ('name', 'address', 'email', 'group', 'area', 'is_assigned', 'is_attended')
     search_fields = ('name',)
     ordering = ('name',)
     list_filter = ('name', 'created_at', 'group', 'area')
     exclude = ['is_delete', 'is_active']
     fieldsets = (
         (None, {
-            'fields': ('name', 'email', 'is_attended', 'group', 'area', 'address')
+            'fields': ('name', 'email', 'is_attended', 'is_assigned', 'code', 'group', 'area', 'address')
         }),
     )
 

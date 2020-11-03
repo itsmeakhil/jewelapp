@@ -15,8 +15,8 @@ class AgentService:
         if Agent.objects.filter(is_assigned=False).exists():
             agent = Agent.objects.get_by_filter(is_assigned=False)[0]
             serializer = AgentSerializer(agent)
-            agent.is_assigned = True
-            agent.save()
+            # agent.is_assigned = True
+            # agent.save()
             logger.info('Get agent success')
             return response.get_success_200('Customer details loaded successfully', serializer.data)
         logger.error(' No Customer data found ')
@@ -89,18 +89,50 @@ class AgentService:
                 serializer = AgentSerializer(data=i)
                 if serializer.is_valid():
                     agent = serializer.save()
+                    print('added agents', agent.name)
+                # if i['address']:
+                #     print(i)
+                #     print(i['address'])
+                #     print(math.isnan(i['address']))
+                #     if math.isnan(i['address']):
+                #         i['address'] = ' '
+                # if i['code']:
+                #     print(i['code'])
+                #     if math.isnan(i['code']):
+                #         i['code'] = ' '
+                # if i['email']:
+                #     print(i['email'])
+                #     if math.isnan(i['email']):
+                #         i['email'] = ' '
+                # if i['group']:
+                #     print(i['group'])
+                #     if not math.isnan(i['group']):
+                #         i['group'] = int(i['group'])
+                #
+                # if i['area']:
+                #     print(i['area'])
+                #     if not math.isnan(i['area']):
+                #         i['area'] = int(i['area'])
+                print(i)
                 if i['phone_number1']:
+                    print('here')
                     if not math.isnan(i['phone_number1']):
+                        print('1')
                         if not AgentPhoneNumber.objects.get_by_filter(phone_number=int(i['phone_number1'])).exists():
-                            AgentPhoneNumber.objects.create(agent=agent, phone_number=int(i['phone_number1']), status=status)
+                            AgentPhoneNumber.objects.create(agent=agent, phone_number=int(i['phone_number1']),
+                                                            status=status)
                 if i['phone_number2']:
                     if not math.isnan(i['phone_number2']):
+                        print('111')
                         if not AgentPhoneNumber.objects.get_by_filter(phone_number=int(i['phone_number2'])).exists():
-                            AgentPhoneNumber.objects.create(agent=agent, phone_number=int(i['phone_number2']), status=status)
+                            AgentPhoneNumber.objects.create(agent=agent, phone_number=int(i['phone_number2']),
+                                                            status=status)
                 if i['phone_number3']:
                     if not math.isnan(i['phone_number3']):
+                        print('11111')
                         if not AgentPhoneNumber.objects.get_by_filter(phone_number=int(i['phone_number3'])).exists():
-                            AgentPhoneNumber.objects.create(agent=agent, phone_number=int(i['phone_number3']), status=status)
+                            AgentPhoneNumber.objects.create(agent=agent, phone_number=int(i['phone_number3']),
+                                                            status=status)
             return response.post_success('Data added successfully')
 
     def add_agent_remarks(self, data):
