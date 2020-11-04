@@ -51,7 +51,6 @@ class PhoneNumberStatusSerializer(serializers.ModelSerializer):
 
 class AgentPhoneNumberSerializer(serializers.ModelSerializer):
     """Serializer for adding Agent phone number"""
-
     class Meta:
         model = AgentPhoneNumber
         fields = '__all__'
