@@ -51,7 +51,7 @@ class AgentService:
         return response.get_success_200('Phone status loaded successfully', serializer.data)
 
     def update_phone_status(self, data, user):
-        phone_exists = AgentPhoneNumber.objects.filter(phone_number=data['phone_number']).exists()
+        phone_exists = AgentPhoneNumber.objects.get_by_id(data['phone_number']).exists()
         if phone_exists:
             status = PhoneNumberStatus.objects.get(data['status'])
             phone = AgentPhoneNumber.objects.get(phone_number=data['phone_number'])
