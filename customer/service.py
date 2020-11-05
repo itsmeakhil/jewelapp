@@ -2,7 +2,7 @@ from django.db import transaction
 
 from agent.models import ContactStatus, PhoneNumberStatus
 from agent.serializers import ContactStatusSerializer
-from customer.models import CustomerPhoneNumber,CustomerRemarks
+from customer.models import CustomerPhoneNumber, CustomerRemarks
 from customer.serializers import CustomerRemarksSerializer, CustomerSerializer
 from utils import responses as response, logger, constants
 
@@ -51,16 +51,31 @@ class CustomerService:
 
     def add_customer(self, data):
         with transaction.atomic():
+            print(data)
             serializer = CustomerSerializer(data=data)
+            print(serializer.is_valid())
             if serializer.is_valid():
+                print('here')
                 customer = serializer.save()
+                print(customer)
                 status = PhoneNumberStatus.objects.get(name=constants.ACTIVE)
                 if data['remarks']:
-                    CustomerRemarks.objects.create(customer=customer,remarks=data['remarks'])
-                for i in data['phone_number']:
-                    if not CustomerPhoneNumber.objects.filter(phone_number=i).exists():
-                        CustomerPhoneNumber.objects.create(customer=customer, phone_number=i, status=status)
+                    CustomerRemarks.objects.create(customer=customer, remarks=data['remarks'])
+                if data['phone_number1']:
+                    if not CustomerPhoneNumber.objects.get_by_filter(phone_number=int(data['phone_number1'])).exists():
+                        CustomerPhoneNumber.objects.create(customer=customer, phone_number=int(data['phone_number1']),
+                                                           status=status)
+                if data['phone_number2']:
+                    if not CustomerPhoneNumber.objects.get_by_filter(phone_number=int(data['phone_number2'])).exists():
+                        CustomerPhoneNumber.objects.create(customer=customer, phone_number=int(data['phone_number2']),
+                                                           status=status)
+                if data['phone_number3']:
+                    if not CustomerPhoneNumber.objects.get_by_filter(phone_number=int(data['phone_number3'])).exists():
+                        CustomerPhoneNumber.objects.create(customer=customer, phone_number=int(data['phone_number3']),
+                                                           status=status)
+
                 return response.get_success_200('Customer Details added successfully', serializer.data)
+            return response.serializer_error_400(serializer)
 
     def add_customer_remarks(self, data):
         with transaction.atomic():
