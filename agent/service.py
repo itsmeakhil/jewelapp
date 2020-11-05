@@ -15,8 +15,8 @@ class AgentService:
         if Agent.objects.filter(is_assigned=False).exists():
             agent = Agent.objects.get_by_filter(is_assigned=False)[0]
             serializer = AgentSerializer(agent)
-            # agent.is_assigned = True
-            # agent.save()
+            agent.is_assigned = True
+            agent.save()
             logger.info('Get agent success')
             return response.get_success_200('Customer details loaded successfully', serializer.data)
         logger.error(' No Customer data found ')
