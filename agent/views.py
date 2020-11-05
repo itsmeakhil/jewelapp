@@ -74,6 +74,16 @@ class AddQuestionAnswer(APIView):
             logger.error(f'Request -- Error : Question answer in to system {e}')
             return response.exception_500(e)
 
+class AddQuestionRemarks(APIView):
+    service = service.AgentService()
+
+    def post(self, request):
+        try:
+            return self.service.add_question_remarks(data=request.data)
+        except Exception as e:
+            logger.error(f'Request -- Error : Question remarks in to system {e}')
+            return response.exception_500(e)
+
 
 @permission_classes((AllowAny,))
 class AddBulkAgents(APIView):

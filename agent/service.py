@@ -75,8 +75,6 @@ class AgentService:
                 option = QuestionOption.objects.get_by_id(data['option'])
                 answer = AgentAnswers.objects.get(agent=data['agent'], question=data['question'])
                 answer.option = option
-                if data['remarks']:
-                    answer.remarks = data['remarks']
                 answer.save()
                 return response.put_success_message('Answer updated successfully')
             option = QuestionOption.objects.get_by_id(data['option'])
@@ -146,3 +144,12 @@ class AgentService:
                 serializer.save()
                 return response.post_success_201('Successfully added Remarks ', serializer.data)
             return response.serializer_error_400(serializer)
+
+    def add_question_remarks(self, data):
+        with transaction.atomic():
+            if AgentAnswers.objects.filter(agent=data['agent'], question=data['question']).exists():
+                answer = AgentAnswers.objects.get(agent=data['agent'], question=data['question'])
+                answer.remarks = data['remarks']
+                answer.save()
+                return response.put_success_message('Answer remarks added successfully')
+            return response.error_response_400('Answer not found.')
