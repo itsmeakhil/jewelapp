@@ -78,7 +78,7 @@ class AgentService:
                 answer.save()
                 return response.put_success_message('Answer updated successfully')
             option = QuestionOption.objects.get_by_id(data['option'])
-            AgentAnswers.objects.create(agent=agent, question=question, option=option, remarks=" ")
+            AgentAnswers.objects.create(agent=agent, question=question, option=option)
             return response.get_success_message('Answer added successfully')
 
     def add_agents(self, request):
