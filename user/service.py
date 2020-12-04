@@ -1,11 +1,12 @@
-from django.contrib.auth import logout, authenticate
+from django.contrib.auth import logout
 from django.db import transaction
 from passlib.handlers.pbkdf2 import pbkdf2_sha256
-
-from utils import responses as response, constants, logger
-from user.models import User
 from rest_framework.authtoken.models import Token
+
 from user import serializers as user_serializer
+from user.models import User
+from user.serializers import UserSerializer
+from utils import responses as response, logger
 
 
 class UserLoginService:
@@ -41,16 +42,22 @@ class UserLoginService:
             user = User.objects.get(username=username)
             if user.password == password:
                 token, _ = Token.objects.get_or_create(user=user)
-                user_data = user_serializer.UserSerializer(user)
+                user_data = UserSerializer(user)
                 data = {
                     "token": token.key,
                     "user": user_data.data,
                 }
                 logger.info('User login Success')
                 return response.get_success_200('User login successful', data)
-            return response.set_response(' Password is incorrect, please check the password and try again',400)
+            return response.set_response(' Password is incorrect, please check the password and try again', 400)
         logger.error(' The employee id or password you entered is incorrect ')
-        return response.set_response('Unable to find the user, Please check the username and try again',400)
+        return response.set_response('Unable to find the user, Please check the username and try again', 400)
+
+    def get_field_agent(self):
+
+        users = User.objects.get_by_filter(user_type__user_type__icontains='Field Agent')
+        users = UserSerializer(users, many=True)
+        return response.get_success_200('Users list loaded successfully', users.data)
 
     def logout(self, request, ip):
         """Function to logout the current user"""

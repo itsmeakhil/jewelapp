@@ -3,17 +3,15 @@ from pathlib import Path
 
 import dj_database_url
 import django_heroku
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
+SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'xl-u&drc97jxl7j(=po=@x#wjv@r5ch($4tfu(az10z75v_pv='
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 ALLOWED_HOSTS = ['*']
 
@@ -48,13 +46,11 @@ INSTALLED_APPS = [
     'agent',
     'company',
     'questions',
-    'customer'
+    'customer',
 
 ]
 
-PASSWORD_HASHERS = [
-    'django.contrib.auth.hashers.PBKDF2PasswordHasher'
-]
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -91,8 +87,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',)
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.IsAuthenticated',)
 }
 
 WSGI_APPLICATION = 'jewelapp.wsgi.application'
@@ -100,8 +96,8 @@ WSGI_APPLICATION = 'jewelapp.wsgi.application'
 # Database
 SQLITE = False
 LOCAL_POSTGRESQL = False
-ON_HEROKU = True
-ON_DEV = False
+ON_HEROKU = False
+ON_DEV = True
 DATABASES = {}
 
 if SQLITE:
@@ -120,11 +116,15 @@ elif ON_DEV:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'jewelapp',
+            'NAME': 'telecaller',
             'USER': 'postgres',
-            'PASSWORD': 'password',
-            'HOST': 'psql-db.dev.wecodelife.com',
+            'PASSWORD': 'telecaller123',
+            'HOST': 'postgres-db.app.vazhemadomprints.com',
             'PORT': '26114',
+            'OPTIONS': {
+                'sslmode': 'prefer',
+            },
+
         }
     }
 
@@ -143,9 +143,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/3.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -159,11 +156,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static'),
-# ]
+STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(STATIC_ROOT, 'media')

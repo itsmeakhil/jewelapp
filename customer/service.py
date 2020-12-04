@@ -2,36 +2,52 @@ from django.db import transaction
 
 from agent.models import ContactStatus, PhoneNumberStatus
 from agent.serializers import ContactStatusSerializer
-from customer.models import CustomerPhoneNumber, CustomerRemarks
-from customer.serializers import CustomerRemarksSerializer, CustomerSerializer
+from customer.models import CustomerPhoneNumber, CustomerRemarks, CustomerFieldReport, Customer, CustomerStatus, \
+    CustomerFieldAgent
+from customer.serializers import CustomerRemarksSerializer, CustomerSerializer, CustomerGetSerializer, \
+    CustomerFieldAgentGetReportSerializer, CustomerFieldReportGetSerializer
 from utils import responses as response, logger, constants
 
 
 class CustomerService:
-    # def get_customer(self, request):
-    #     if Agent.objects.filter(is_attended=False).exists():
-    #         agent = Agent.objects.get_by_filter(is_attended=False)[0]
-    #         serializer = AgentSerializer(agent)
-    #         logger.info('Get agent success')
-    #         return response.get_success_200('Customer details loaded successfully', serializer.data)
-    #     logger.error(' No Customer data found ')
-    #     return response.get_success_message('No data found')
+    def get_customer(self):
+        if Customer.objects.filter(is_attended=False).exists():
+            customer = Customer.objects.get_by_filter(is_attended=False)[0]
+            if CustomerFieldReport.objects.get_by_filter(customer=customer).exists():
+                field_report = CustomerFieldReport.objects.get_by_filter(customer=customer)[0]
+                field_report_serializer = CustomerFieldReportGetSerializer(field_report)
+                serializer = CustomerGetSerializer(customer)
+                customer.is_attended = True
+                customer.save()
+                data = {
+                    "customer": serializer.data,
+                    "field_report": field_report_serializer.data
+                }
+                logger.info('Get agent success')
+                return response.get_success_200('Customer details loaded successfully', data)
+        logger.error(' No Customer data found ')
+        return response.get_success_message('No data found')
 
-    # def update_service_Status(self, data, user):
-    #     agent_status_exists = AgentStatus.objects.filter(agent=data['agent']).exists()
-    #     status = ContactStatus.objects.get_by_id(data['status'])
-    #     agent = Agent.objects.get_by_id(data['agent'])
-    #     if agent_status_exists:
-    #         agent_status = AgentStatus.objects.get(agent=data['agent'])
-    #         status = ContactStatus.objects.get_by_id(data['status'])
-    #         agent_status.status = status
-    #         agent_status.user = user
-    #         agent_status.save()
-    #         agent.is_attended = True
-    #         agent.save()
-    #         return response.put_success_message('Updated Customer Service Status')
-    #     AgentStatus.objects.create(agent=agent, user=user, status=status)
-    #     return response.post_success('Added Customer Status Data')
+    def get_all_customers(self):
+        customer = Customer.objects.get_by_filter(is_assigned=False)
+        serializer = CustomerGetSerializer(customer)
+        return response.get_success_200('Customer list loaded successfully', serializer.data)
+
+    def update_service_Status(self, data, user):
+        customer_status_exists = CustomerStatus.objects.filter(customer=data['customer']).exists()
+        status = ContactStatus.objects.get_by_id(data['status'])
+        customer = Customer.objects.get_by_id(data['customer'])
+        if customer_status_exists:
+            customer_status = CustomerStatus.objects.get(customer=data['customer'])
+            status = ContactStatus.objects.get_by_id(data['status'])
+            customer_status.status = status
+            customer_status.user = user
+            customer_status.save()
+            customer.is_attended = True
+            customer.save()
+            return response.put_success_message('Updated Customer Service Status')
+        CustomerStatus.objects.create(customer=customer, user=user, status=status)
+        return response.post_success('Added Customer Status Data')
 
     def get_contact_status(self):
         contact_status = ContactStatus.objects.get_all_active()
@@ -51,7 +67,6 @@ class CustomerService:
 
     def add_customer(self, data):
         with transaction.atomic():
-            print(data)
             serializer = CustomerSerializer(data=data)
             print(serializer.is_valid())
             if serializer.is_valid():
@@ -84,3 +99,19 @@ class CustomerService:
                 serializer.save()
                 return response.post_success_201('Successfully added Remarks ', serializer.data)
             return response.serializer_error_400(serializer)
+
+    def get_customers_by_assigned_user(self, user):
+
+        customers = CustomerFieldAgent.objects.get_by_filter(user=user, status=1)
+        customers_data = CustomerFieldAgentGetReportSerializer(customers, many=True)
+        return response.get_success_200('Customers list loaded successfully', customers_data.data)
+
+    def assign_customers(self, data):
+        if data['customers'] and data['user']:
+            for i in data['customers']:
+                if not CustomerFieldAgent.objects.filter(customer=i).exists():
+                    serializer = CustomerFieldAgentGetReportSerializer(data={"customer": i, "user": data['user']})
+                    if serializer.is_valid():
+                        serializer.save()
+            return response.post_success('Customers assigned successfully')
+        return response.error_response_400('Entered data format is incorrect ')

@@ -1,37 +1,94 @@
+from rest_framework import viewsets
 from rest_framework.views import APIView
 
 from customer import service
+from customer.models import CustomerFieldReport
+from customer.serializers import CustomerFieldReportSerializer
 from utils import responses as response, logger
+
+service = service.CustomerService()
 
 
 class UpdatePhoneNumberStatus(APIView):
-    service = service.CustomerService()
 
     def post(self, request):
         try:
-            return self.service.update_phone_status(data=request.data, user=request.user)
+            return service.update_phone_status(data=request.data, user=request.user)
         except Exception as e:
             logger.error(f'Request -- Error : updating phone number status in to system {e}')
             return response.exception_500(e)
 
 
-class AddCustomerRemarks(APIView):
-    service = service.CustomerService()
+class UpdateCustomerStatus(APIView):
 
     def post(self, request):
         try:
-            return self.service.add_customer_remarks(data=request.data)
+            return service.update_service_Status(data=request.data, user=request.user)
+        except Exception as e:
+            logger.error(f'Request -- Error : updating customer status in to system {e}')
+            return response.exception_500(e)
+
+
+class AddCustomerRemarks(APIView):
+
+    def post(self, request):
+        try:
+            return service.add_customer_remarks(data=request.data)
         except Exception as e:
             logger.error(f'Request -- Error : Adding Agents remarks in to system {e}')
             return response.exception_500(e)
 
 
-class AddCustomer(APIView):
-    service = service.CustomerService()
+class Customer(APIView):
+
+    def get(self, request):
+        try:
+            return service.get_customer()
+        except Exception as e:
+            logger.error(f'Request -- Error : Getting customer details from system {e}')
+            return response.exception_500(e)
 
     def post(self, request):
         try:
-            return self.service.add_customer(data=request.data)
+            return service.add_customer(data=request.data)
         except Exception as e:
             logger.error(f'Request -- Error : Adding Customer details in to system {e}')
             return response.exception_500(e)
+
+
+class GetCustomersByUser(APIView):
+
+    def get(self, request):
+        try:
+            return service.get_customers_by_assigned_user(request.user.id)
+        except Exception as e:
+            logger.error(f'Request -- Error : Getting customer details from system {e}')
+            return response.exception_500(e)
+
+
+class AssignCustomers(APIView):
+
+    def post(self, request):
+        try:
+            return service.assign_customers(request.data)
+        except Exception as e:
+            logger.error(f'Request -- Error : Assigning customer details from system {e}')
+            return response.exception_500(e)
+
+
+class GetCustomersList(APIView):
+
+    def get(self, request):
+        try:
+            return service.get_all_customers()
+        except Exception as e:
+            logger.error(f'Request -- Error : Getting customer list in to system {e}')
+            return response.exception_500(e)
+
+
+class FieldReportViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing field report.
+    """
+    queryset = CustomerFieldReport.objects.get_all_active()
+    serializer_class = CustomerFieldReportSerializer

@@ -9,7 +9,6 @@ from utils.basemodel import BaseModel
 class ContactStatus(BaseModel):
     name = models.CharField(max_length=30, null=False, blank=False)
     description = models.CharField(max_length=50, null=True, blank=True)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
     objects = BaseManager()
 
@@ -20,7 +19,7 @@ class ContactStatus(BaseModel):
 class PhoneNumberStatus(BaseModel):
     name = models.CharField(max_length=30, null=False, blank=False)
     description = models.CharField(max_length=50, null=True, blank=True)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    is_invalid = models.BooleanField(default=False)
 
     objects = BaseManager()
 
@@ -31,7 +30,6 @@ class PhoneNumberStatus(BaseModel):
 class Group(BaseModel):
     name = models.CharField(max_length=50, null=True, blank=True)
     description = models.TextField(null=True)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
     objects = BaseManager()
 
@@ -41,7 +39,6 @@ class Group(BaseModel):
 
 class Area(BaseModel):
     name = models.CharField(max_length=50, null=True, blank=True)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
     objects = BaseManager()
 

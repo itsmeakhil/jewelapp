@@ -1,6 +1,5 @@
 from django.db import models
 
-# Create your models here.
 from utils.basemanager import BaseManager
 from utils.basemodel import BaseModel
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from agent.models import Agent, ContactStatus, AgentPhoneNumber, PhoneNumberStatus, AgentRemarks
+from agent.models import Agent, ContactStatus, AgentPhoneNumber, PhoneNumberStatus, AgentRemarks, Area
 
 
 class AgentSerializer(serializers.ModelSerializer):
@@ -61,4 +61,12 @@ class AgentRemarksSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AgentRemarks
+        fields = '__all__'
+
+
+class AreaSerializer(serializers.ModelSerializer):
+    """Serializer for adding Area"""
+
+    class Meta:
+        model = Area
         fields = '__all__'

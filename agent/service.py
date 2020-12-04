@@ -1,5 +1,3 @@
-import math
-
 import pandas
 from django.db import transaction
 
@@ -19,7 +17,7 @@ class AgentService:
             agent.save()
             logger.info('Get agent success')
             return response.get_success_200('Customer details loaded successfully', serializer.data)
-        logger.error(' No Customer data found ')
+        logger.error(' No Agent data found ')
         return response.get_success_message('No data found')
 
     def update_service_Status(self, data, user):
@@ -87,55 +85,59 @@ class AgentService:
             excel_data_df = pandas.read_excel(file, sheet_name='Sheet1')
             data = excel_data_df.to_dict(orient='record')
             status = PhoneNumberStatus.objects.get(name=constants.ACTIVE)
+            x = 1
             for i in data:
-                serializer = AgentSerializer(data=i)
-                if serializer.is_valid():
-                    agent = serializer.save()
-                    print('added agents', agent.name)
-                # if i['address']:
-                #     print(i)
-                #     print(i['address'])
-                #     print(math.isnan(i['address']))
-                #     if math.isnan(i['address']):
-                #         i['address'] = ' '
-                # if i['code']:
-                #     print(i['code'])
-                #     if math.isnan(i['code']):
-                #         i['code'] = ' '
-                # if i['email']:
-                #     print(i['email'])
-                #     if math.isnan(i['email']):
-                #         i['email'] = ' '
-                # if i['group']:
-                #     print(i['group'])
-                #     if not math.isnan(i['group']):
-                #         i['group'] = int(i['group'])
-                #
-                # if i['area']:
-                #     print(i['area'])
-                #     if not math.isnan(i['area']):
-                #         i['area'] = int(i['area'])
-                print(i)
-                if i['phone_number1']:
-                    print('here')
-                    if not math.isnan(i['phone_number1']):
-                        print('1')
-                        if not AgentPhoneNumber.objects.get_by_filter(phone_number=int(i['phone_number1'])).exists():
-                            AgentPhoneNumber.objects.create(agent=agent, phone_number=int(i['phone_number1']),
-                                                            status=status)
-                if i['phone_number2']:
-                    if not math.isnan(i['phone_number2']):
-                        print('111')
-                        if not AgentPhoneNumber.objects.get_by_filter(phone_number=int(i['phone_number2'])).exists():
-                            AgentPhoneNumber.objects.create(agent=agent, phone_number=int(i['phone_number2']),
-                                                            status=status)
-                if i['phone_number3']:
-                    if not math.isnan(i['phone_number3']):
-                        print('11111')
-                        if not AgentPhoneNumber.objects.get_by_filter(phone_number=int(i['phone_number3'])).exists():
-                            AgentPhoneNumber.objects.create(agent=agent, phone_number=int(i['phone_number3']),
-                                                            status=status)
-            return response.post_success('Data added successfully')
+                m = "hcsahh"
+                f = 100.00
+                m_type = type(m)  # Do not remove this
+                f_type = type(f)
+                n_type = type(i['name'])
+                sec_type = type(i['second_name'])
+                if n_type == m_type or sec_type == m_type:
+                    if n_type == f_type:
+                        i.update({'name': i['second_name']})
+                    if type(i['address']) == f_type:
+                        i.update({'address': ""})
+                    if type(i['code']) == f_type:
+                        i.update({'code': ""})
+                    if type(i['phone_number1']) == f_type:
+                        i.update({'phone_number1': ""})
+                    if type(i['phone_number2']) == f_type:
+                        i.update({'phone_number2': ""})
+                    if type(i['phone_number3']) == f_type:
+                        i.update({'phone_number3': ""})
+
+                    ph1_exists = True
+                    ph2_exists = True
+                    ph3_exists = True
+
+                    if i['phone_number1']:
+                        ph1_exists = AgentPhoneNumber.objects.get_by_filter(
+                            phone_number=int(i['phone_number1'])).exists()
+                    if i['phone_number2']:
+                        ph2_exists = AgentPhoneNumber.objects.get_by_filter(
+                            phone_number=int(i['phone_number2'])).exists()
+                    if i['phone_number3']:
+                        ph3_exists = AgentPhoneNumber.objects.get_by_filter(
+                            phone_number=int(i['phone_number3'])).exists()
+
+                    if not ph1_exists or not ph2_exists or not ph3_exists:
+                        serializer = AgentSerializer(data=i)
+                        if serializer.is_valid():
+                            agent = serializer.save()
+                            print(f'{x} : Added agents : ', agent.name)
+                            x += 1
+                            if not ph1_exists:
+                                AgentPhoneNumber.objects.create(agent=agent, phone_number=int(i['phone_number1']),
+                                                                status=status)
+                            if not ph2_exists:
+                                AgentPhoneNumber.objects.create(agent=agent, phone_number=int(i['phone_number2']),
+                                                                status=status)
+                            if not ph3_exists:
+                                AgentPhoneNumber.objects.create(agent=agent, phone_number=int(i['phone_number3']),
+                                                                status=status)
+        return response.post_success('Data added successfully')
+
 
     def add_agent_remarks(self, data):
         with transaction.atomic():
@@ -144,6 +146,7 @@ class AgentService:
                 serializer.save()
                 return response.post_success_201('Successfully added Remarks ', serializer.data)
             return response.serializer_error_400(serializer)
+
 
     def add_question_remarks(self, data):
         with transaction.atomic():
