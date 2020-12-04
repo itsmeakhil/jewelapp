@@ -38,11 +38,6 @@ class GroupAdmin(admin.ModelAdmin):
     ordering = ('created_at',)
     list_filter = ('name', 'created_at',)
     exclude = ['is_delete', 'is_active']
-    fieldsets = (
-        (None, {
-            'fields': ('name', 'company', 'description')
-        }),
-    )
 
 
 @admin.register(Area)
@@ -56,11 +51,7 @@ class AreaAdmin(admin.ModelAdmin):
     ordering = ('created_at',)
     list_filter = ('name', 'created_at',)
     exclude = ['is_delete', 'is_active']
-    fieldsets = (
-        (None, {
-            'fields': ('name', 'company')
-        }),
-    )
+
 
 
 @admin.register(ContactStatus)
@@ -74,11 +65,6 @@ class ContactStatusAdmin(admin.ModelAdmin):
     ordering = ('created_at',)
     list_filter = ('name', 'created_at',)
     exclude = ['is_delete', 'is_active']
-    fieldsets = (
-        (None, {
-            'fields': ('name', 'description', 'company')
-        }),
-    )
 
 
 @admin.register(AgentStatus)
