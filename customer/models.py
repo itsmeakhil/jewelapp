@@ -6,7 +6,7 @@ from utils.basemanager import BaseManager
 from utils.basemodel import BaseModel
 
 finance_bg = ((1, "1"), (2, "2"), (3, "3"))
-customer_field_agent_status = ((1, "Open"), (2, "Closed"), (3, "Edited"))
+customer_field_agent_status = ((1, "Open"), (2, "Updated"))
 
 
 class Customer(BaseModel):
@@ -52,21 +52,21 @@ class CustomerRemarks(BaseModel):
 
 class CustomerFieldReport(BaseModel):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    marriage_date = models.DateTimeField(null=True, blank=True)
+    marriage_date = models.DateField(null=True, blank=True)
     financial_bg = models.IntegerField(choices=finance_bg, default=1)
     gold_amt = models.CharField(max_length=10, null=True, blank=True)
     marriage_set = models.CharField(max_length=10, null=True, blank=True)
     is_exchanging = models.BooleanField(default=False, null=True, blank=True)
     is_exchanging_old = models.BooleanField(default=False, null=True, blank=True)
     is_taking_emi = models.BooleanField(default=False, null=True, blank=True)
-    duraton_of_loan = models.IntegerField(null=True, blank=True, default=0)
+    duration_of_loan = models.IntegerField(null=True, blank=True, default=0)
     number_of_emi = models.IntegerField(null=True, blank=True, default=0)
     is_advance_booking = models.BooleanField(default=False, null=True, blank=True)
     token_advance = models.CharField(max_length=10, null=True, blank=True)
     rate_at_booking = models.CharField(max_length=10, null=True, blank=True)
-    image_1 = models.ImageField(upload_to='field_image/')
-    image_2 = models.ImageField(upload_to='field_image/')
-    image_3 = models.ImageField(upload_to='field_image/')
+    image_1 = models.ImageField(upload_to='field_image/', null=True, blank=True)
+    image_2 = models.ImageField(upload_to='field_image/', null=True, blank=True)
+    image_3 = models.ImageField(upload_to='field_image/', null=True, blank=True)
     is_another_jeweller_came = models.BooleanField(default=False)
     is_advanced_in_other = models.BooleanField(default=False)
     amount_advanced_in_other = models.CharField(max_length=10, null=True, blank=True)

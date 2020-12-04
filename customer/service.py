@@ -5,7 +5,7 @@ from agent.serializers import ContactStatusSerializer
 from customer.models import CustomerPhoneNumber, CustomerRemarks, CustomerFieldReport, Customer, CustomerStatus, \
     CustomerFieldAgent
 from customer.serializers import CustomerRemarksSerializer, CustomerSerializer, CustomerGetSerializer, \
-    CustomerFieldAgentGetReportSerializer, CustomerFieldReportGetSerializer
+    CustomerFieldAgentGetReportSerializer, CustomerFieldReportGetSerializer, CustomerFieldReportSerializer
 from utils import responses as response, logger, constants
 
 
@@ -68,11 +68,8 @@ class CustomerService:
     def add_customer(self, data):
         with transaction.atomic():
             serializer = CustomerSerializer(data=data)
-            print(serializer.is_valid())
             if serializer.is_valid():
-                print('here')
                 customer = serializer.save()
-                print(customer)
                 status = PhoneNumberStatus.objects.get(name=constants.ACTIVE)
                 if data['remarks']:
                     CustomerRemarks.objects.create(customer=customer, remarks=data['remarks'])
@@ -115,3 +112,32 @@ class CustomerService:
                         serializer.save()
             return response.post_success('Customers assigned successfully')
         return response.error_response_400('Entered data format is incorrect ')
+
+    def add_field_report(self, data):
+        with transaction.atomic():
+            if data:
+                if not CustomerFieldReport.objects.get_by_filter(customer=data['customer']).exists():
+                    serialized_data = CustomerFieldReportSerializer(data=data)
+                    if serialized_data.is_valid():
+                        cus_field_agent_data = CustomerFieldAgent.objects.get(customer=data['customer'])
+                        cus_field_agent_data.status = 2,
+                        serialized_data.save()
+                        return response.post_success_201('Field Report added successfully', serialized_data.data)
+                    return response.serializer_error_400(serialized_data)
+                return response.error_response_400('Field report for the customer already exists')
+            return response.error_response_400('Invalid data format')
+
+    def update_field_report(self, data, pk):
+        with transaction.atomic():
+            if data:
+                if CustomerFieldReport.objects.get_by_id(pk):
+                    field_data = CustomerFieldReport.objects.get_by_id(pk)
+                    serialized_data = CustomerFieldReportSerializer(field_data, data=data)
+                    if serialized_data.is_valid():
+                        cus_field_agent_data = CustomerFieldAgent.objects.get(customer=data['customer'])
+                        cus_field_agent_data.status = 2,
+                        serialized_data.save()
+                        return response.post_success_201('Field Report added successfully', serialized_data.data)
+                    return response.serializer_error_400(serialized_data)
+                return response.error_response_400('Field report for the customer not found ')
+            return response.error_response_400('Invalid data format ')

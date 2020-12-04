@@ -92,3 +92,9 @@ class FieldReportViewSet(viewsets.ModelViewSet):
     """
     queryset = CustomerFieldReport.objects.get_all_active()
     serializer_class = CustomerFieldReportSerializer
+
+    def create(self, request, *args, **kwargs):
+        return service.add_field_report(request.data)
+
+    def update(self, request, pk, *args, **kwargs):
+        return service.update_field_report(data=request.data, pk=pk)
