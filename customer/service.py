@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Q
 
 from agent.models import ContactStatus, PhoneNumberStatus
 from agent.serializers import ContactStatusSerializer
@@ -28,9 +29,12 @@ class CustomerService:
         logger.error(' No Customer data found ')
         return response.get_success_message('No data found')
 
-    def get_all_customers(self):
+    def get_all_customers(self, request):
         customer = Customer.objects.get_by_filter(is_assigned=False)
-        serializer = CustomerGetSerializer(customer)
+        print(customer)
+        if request.GET.get('area'):
+            customer = customer.filter(area=request.GET.get('area'))
+        serializer = CustomerSerializer(customer, many=True)
         return response.get_success_200('Customer list loaded successfully', serializer.data)
 
     def update_service_Status(self, data, user):
@@ -97,9 +101,12 @@ class CustomerService:
                 return response.post_success_201('Successfully added Remarks ', serializer.data)
             return response.serializer_error_400(serializer)
 
-    def get_customers_by_assigned_user(self, user):
-
-        customers = CustomerFieldAgent.objects.get_by_filter(user=user, status=1)
+    def get_customers_by_assigned_user(self, request):
+        customers = CustomerFieldAgent.objects.get_by_filter(user=request.user.id, status=1)
+        if request.GET.get('q'):
+            queryset = (Q(customer__bride_name__icontains=request.GET.get('q'))
+                        | Q(customer__name_of_guardian__icontains=request.GET.get('q')))
+            customers = customers.filter(queryset)
         customers_data = CustomerFieldAgentGetReportSerializer(customers, many=True)
         return response.get_success_200('Customers list loaded successfully', customers_data.data)
 
@@ -141,3 +148,8 @@ class CustomerService:
                     return response.serializer_error_400(serialized_data)
                 return response.error_response_400('Field report for the customer not found ')
             return response.error_response_400('Invalid data format ')
+
+    def get_customer_details(self,pk):
+        customer = Customer.objects.get_by_id(pk)
+        customer = CustomerSerializer(customer)
+        return response.get_success_200('Customer details loaded successfully',customer.data)

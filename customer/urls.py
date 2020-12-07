@@ -5,6 +5,7 @@ from customer import views
 urlpatterns = [
 
     path('customers/', views.Customer.as_view(), name='customer'),
+    path('customer-details/<int:pk>/', views.CustomerDetails.as_view(), name='customer_details'),
     path('assign-customers/', views.AssignCustomers.as_view(), name='assign_customer'),
     path('get-customer-by-user/', views.GetCustomersByUser.as_view(), name='get_customer_by_user'),
     path('get-customer-list/', views.GetCustomersList.as_view(), name='get_customer_list'),

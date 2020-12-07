@@ -19,7 +19,7 @@ class CustomerGetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Customer
-        fields = ('bride_name', 'name_of_guardian', 'house_name', 'place', 'area', 'area_name', 'post_office',
+        fields = ('id','bride_name', 'name_of_guardian', 'house_name', 'place', 'area', 'area_name', 'post_office',
                   'district', 'marriage_date', 'number', 'remarks')
         read_only_fields = ('area_name', 'number', 'remarks')
 
@@ -79,7 +79,7 @@ class CustomerFieldAgentReportSerializer(serializers.ModelSerializer):
 
 class CustomerFieldAgentGetReportSerializer(serializers.ModelSerializer):
     """Serializer for getting Customer Remarks"""
-    customer = CustomerGetSerializer(read_only=True)
+    customer = CustomerSerializer(read_only=True)
 
     class Meta:
         model = CustomerFieldAgent
