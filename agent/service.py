@@ -16,7 +16,7 @@ class AgentService:
             agent.is_assigned = True
             agent.save()
             logger.info('Get agent success')
-            return response.get_success_200('Customer details loaded successfully', serializer.data)
+            return response.get_success_200('Agent details loaded successfully', serializer.data)
         logger.error(' No Agent data found ')
         return response.get_success_message('No data found')
 

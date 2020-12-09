@@ -2,11 +2,11 @@ from django.db import transaction
 from django.db.models import Q
 
 from agent.models import ContactStatus, PhoneNumberStatus
-from agent.serializers import ContactStatusSerializer
 from customer.models import CustomerPhoneNumber, CustomerRemarks, CustomerFieldReport, Customer, CustomerStatus, \
     CustomerFieldAgent
 from customer.serializers import CustomerRemarksSerializer, CustomerSerializer, CustomerGetSerializer, \
-    CustomerFieldAgentGetReportSerializer, CustomerFieldReportGetSerializer, CustomerFieldReportSerializer
+    CustomerFieldAgentGetReportSerializer, CustomerFieldReportGetSerializer, CustomerFieldReportSerializer, \
+    CustomerFieldAgentReportSerializer
 from utils import responses as response, logger, constants
 
 
@@ -31,7 +31,6 @@ class CustomerService:
 
     def get_all_customers(self, request):
         customer = Customer.objects.get_by_filter(is_assigned=False)
-        print(customer)
         if request.GET.get('area'):
             customer = customer.filter(area=request.GET.get('area'))
         serializer = CustomerSerializer(customer, many=True)
@@ -52,12 +51,6 @@ class CustomerService:
             return response.put_success_message('Updated Customer Service Status')
         CustomerStatus.objects.create(customer=customer, user=user, status=status)
         return response.post_success('Added Customer Status Data')
-
-    def get_contact_status(self):
-        contact_status = ContactStatus.objects.get_all_active()
-        serializer = ContactStatusSerializer(contact_status, many=True)
-        logger.info('GET Contact status success')
-        return response.get_success_200('Contact status loaded successfully', serializer.data)
 
     def update_phone_status(self, data, user):
         phone_exists = CustomerPhoneNumber.objects.filter(phone_number=data['phone_number']).exists()
@@ -103,6 +96,7 @@ class CustomerService:
 
     def get_customers_by_assigned_user(self, request):
         customers = CustomerFieldAgent.objects.get_by_filter(user=request.user.id, status=1)
+        customers = customers.order_by('created_at')
         if request.GET.get('q'):
             queryset = (Q(customer__bride_name__icontains=request.GET.get('q'))
                         | Q(customer__name_of_guardian__icontains=request.GET.get('q')))
@@ -110,13 +104,26 @@ class CustomerService:
         customers_data = CustomerFieldAgentGetReportSerializer(customers, many=True)
         return response.get_success_200('Customers list loaded successfully', customers_data.data)
 
+    def get_customers_list_by_user(self, user):
+        customers = CustomerFieldAgent.objects.get_by_filter(user=user)
+        customers = customers.order_by('created_at')
+        customers_data = CustomerFieldAgentGetReportSerializer(customers, many=True)
+        return response.get_success_200('Customers list loaded successfully', customers_data.data)
+
     def assign_customers(self, data):
         if data['customers'] and data['user']:
             for i in data['customers']:
                 if not CustomerFieldAgent.objects.filter(customer=i).exists():
-                    serializer = CustomerFieldAgentGetReportSerializer(data={"customer": i, "user": data['user']})
+                    in_data = {"customer": i, "user": data['user']}
+                    serializer = CustomerFieldAgentReportSerializer(data=in_data)
                     if serializer.is_valid():
+                        print(data['customers'], data['user'])
                         serializer.save()
+                        print(i)
+                        customer = Customer.objects.get_by_id(i)
+                        print(customer)
+                        customer.is_attended = True
+                        customer.save()
             return response.post_success('Customers assigned successfully')
         return response.error_response_400('Entered data format is incorrect ')
 
@@ -126,10 +133,12 @@ class CustomerService:
                 if not CustomerFieldReport.objects.get_by_filter(customer=data['customer']).exists():
                     serialized_data = CustomerFieldReportSerializer(data=data)
                     if serialized_data.is_valid():
-                        cus_field_agent_data = CustomerFieldAgent.objects.get(customer=data['customer'])
-                        cus_field_agent_data.status = 2,
-                        serialized_data.save()
-                        return response.post_success_201('Field Report added successfully', serialized_data.data)
+                        if CustomerFieldAgent.objects.get_by_filter(customer=data['customer']).exists():
+                            cus_field_agent_data = CustomerFieldAgent.objects.get(customer=data['customer'])
+                            cus_field_agent_data.status = 2,
+                            serialized_data.save()
+                            return response.post_success_201('Field Report added successfully', serialized_data.data)
+                        return response.error_response_400('The customer is not assigned for field agent')
                     return response.serializer_error_400(serialized_data)
                 return response.error_response_400('Field report for the customer already exists')
             return response.error_response_400('Invalid data format')
@@ -149,7 +158,7 @@ class CustomerService:
                 return response.error_response_400('Field report for the customer not found ')
             return response.error_response_400('Invalid data format ')
 
-    def get_customer_details(self,pk):
+    def get_customer_details(self, pk):
         customer = Customer.objects.get_by_id(pk)
         customer = CustomerSerializer(customer)
-        return response.get_success_200('Customer details loaded successfully',customer.data)
+        return response.get_success_200('Customer details loaded successfully', customer.data)

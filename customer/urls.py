@@ -8,6 +8,7 @@ urlpatterns = [
     path('customer-details/<int:pk>/', views.CustomerDetails.as_view(), name='customer_details'),
     path('assign-customers/', views.AssignCustomers.as_view(), name='assign_customer'),
     path('get-customer-by-user/', views.GetCustomersByUser.as_view(), name='get_customer_by_user'),
+    path('get-customer-by-user/<int:pk>/', views.GetCustomersByAssignedUser.as_view(), name='get_customer_by_user_id'),
     path('get-customer-list/', views.GetCustomersList.as_view(), name='get_customer_list'),
     path('customer-phone/status/update/', views.UpdatePhoneNumberStatus.as_view(), name='update_customer_phone_status'),
     path('customer-status/update/', views.UpdateCustomerStatus.as_view(), name='update_customer_status'),

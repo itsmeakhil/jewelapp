@@ -38,9 +38,10 @@ class AddCustomerRemarks(APIView):
             logger.error(f'Request -- Error : Adding Agents remarks in to system {e}')
             return response.exception_500(e)
 
+
 class CustomerDetails(APIView):
 
-    def post(self, request,pk):
+    def post(self, request, pk):
         try:
             return service.get_customer_details(pk=pk)
         except Exception as e:
@@ -70,6 +71,16 @@ class GetCustomersByUser(APIView):
     def get(self, request):
         try:
             return service.get_customers_by_assigned_user(request)
+        except Exception as e:
+            logger.error(f'Request -- Error : Getting customer details from system {e}')
+            return response.exception_500(e)
+
+
+class GetCustomersByAssignedUser(APIView):
+
+    def get(self, request,pk):
+        try:
+            return service.get_customers_list_by_user(pk)
         except Exception as e:
             logger.error(f'Request -- Error : Getting customer details from system {e}')
             return response.exception_500(e)
