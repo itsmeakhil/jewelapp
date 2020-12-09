@@ -122,7 +122,7 @@ class CustomerService:
                         print(i)
                         customer = Customer.objects.get_by_id(i)
                         print(customer)
-                        customer.is_attended = True
+                        customer.is_assigned = True
                         customer.save()
             return response.post_success('Customers assigned successfully')
         return response.error_response_400('Entered data format is incorrect ')
