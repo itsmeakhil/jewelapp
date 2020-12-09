@@ -74,10 +74,10 @@ class AgentService:
                 answer = AgentAnswers.objects.get(agent=data['agent'], question=data['question'])
                 answer.option = option
                 answer.save()
-                return response.put_success_message('Answer updated successfully')
+                return response.put_success_200('Answer updated successfully',data={})
             option = QuestionOption.objects.get_by_id(data['option'])
             AgentAnswers.objects.create(agent=agent, question=question, option=option)
-            return response.get_success_message('Answer added successfully')
+            return response.get_success_200('Answer added successfully', data={})
 
     def add_agents(self, request):
         file = request.FILES['file']
@@ -138,7 +138,6 @@ class AgentService:
                                                                 status=status)
         return response.post_success('Data added successfully')
 
-
     def add_agent_remarks(self, data):
         with transaction.atomic():
             serializer = AgentRemarksSerializer(data=data)
@@ -146,7 +145,6 @@ class AgentService:
                 serializer.save()
                 return response.post_success_201('Successfully added Remarks ', serializer.data)
             return response.serializer_error_400(serializer)
-
 
     def add_question_remarks(self, data):
         with transaction.atomic():
