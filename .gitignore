@@ -4,7 +4,7 @@
 .idea
 
 debug.log
-#administration/migrations
+static/
 #masters/migrations
 #user/migrations
 #security/migrations

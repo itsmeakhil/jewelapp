@@ -72,6 +72,9 @@ class CustomerFieldReport(BaseModel):
     amount_advanced_in_other = models.CharField(max_length=10, null=True, blank=True)
     know_any_new_party = models.BooleanField(default=False)
     no_of_party = models.IntegerField(null=True, blank=True, default=0)
+    lat = models.CharField(max_length=30, null=True, blank=True)
+    lon = models.CharField(max_length=30, null=True, blank=True)
+
     is_assigned = models.BooleanField(default=False)
 
     objects = BaseManager()
