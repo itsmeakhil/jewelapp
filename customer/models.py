@@ -58,6 +58,7 @@ class CustomerFieldReport(BaseModel):
     marriage_set = models.CharField(max_length=10, null=True, blank=True)
     is_exchanging = models.BooleanField(default=False, null=True, blank=True)
     is_exchanging_old = models.BooleanField(default=False, null=True, blank=True)
+    gold_amt_exchanging = models.CharField(max_length=10, null=True, blank=True)
     is_taking_emi = models.BooleanField(default=False, null=True, blank=True)
     duration_of_loan = models.IntegerField(null=True, blank=True, default=0)
     number_of_emi = models.IntegerField(null=True, blank=True, default=0)
