@@ -150,8 +150,6 @@ class CustomerService:
                     field_data = CustomerFieldReport.objects.get_by_id(pk)
                     serialized_data = CustomerFieldReportSerializer(field_data, data=data)
                     if serialized_data.is_valid():
-                        cus_field_agent_data = CustomerFieldAgent.objects.get(customer=data['customer'])
-                        cus_field_agent_data.status = 2,
                         serialized_data.save()
                         return response.post_success_201('Field Report added successfully', serialized_data.data)
                     return response.serializer_error_400(serialized_data)
