@@ -75,6 +75,9 @@ class CustomerFieldReport(BaseModel):
     no_of_party = models.IntegerField(null=True, blank=True, default=0)
     lat = models.CharField(max_length=30, null=True, blank=True)
     lon = models.CharField(max_length=30, null=True, blank=True)
+    phone_number1 = models.CharField(max_length=30, null=True, blank=True)
+    phone_number2 = models.CharField(max_length=30, null=True, blank=True)
+    phone_number3 = models.CharField(max_length=30, null=True, blank=True)
 
     is_assigned = models.BooleanField(default=False)
 
