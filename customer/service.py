@@ -117,11 +117,8 @@ class CustomerService:
                     in_data = {"customer": i, "user": data['user']}
                     serializer = CustomerFieldAgentReportSerializer(data=in_data)
                     if serializer.is_valid():
-                        print(data['customers'], data['user'])
                         serializer.save()
-                        print(i)
                         customer = Customer.objects.get_by_id(i)
-                        print(customer)
                         customer.is_assigned = True
                         customer.save()
             return response.post_success('Customers assigned successfully')
@@ -160,3 +157,16 @@ class CustomerService:
         customer = Customer.objects.get_by_id(pk)
         customer = CustomerSerializer(customer)
         return response.get_success_200('Customer details loaded successfully', customer.data)
+
+    def update_customer(self, data, pk):
+        with transaction.atomic():
+            if data:
+                if Customer.objects.get_by_id(pk):
+                    customer_data = Customer.objects.get_by_id(pk)
+                    serialized_data = CustomerSerializer(customer_data, data=data)
+                    if serialized_data.is_valid():
+                        serialized_data.save()
+                        return response.put_success_200('Customer details updated successfully', serialized_data.data)
+                    return response.serializer_error_400(serialized_data)
+                return response.error_response_404('Customer not found ')
+            return response.error_response_400('Invalid data format ')
