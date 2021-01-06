@@ -22,15 +22,16 @@ class AgentService:
             agent.save()
             return response.get_success_200('Agent details loaded successfully', serializer.data)
 
-        if Agent.objects.filter(is_assigned=False).exists():
+        elif Agent.objects.filter(is_assigned=False).exists():
             agent = Agent.objects.get_by_filter(is_assigned=False)[0]
             serializer = AgentSerializer(agent)
             agent.is_assigned = True
             agent.save()
             logger.info('Get agent success')
             return response.get_success_200('Agent details loaded successfully', serializer.data)
-        logger.error(' No Agent data found ')
-        return response.get_success_message('No data found')
+        else:
+            logger.error(' No Agent data found ')
+            return response.get_success_message('No data found')
 
     def update_service_Status(self, data, user):
         agent_status_exists = AgentStatus.objects.filter(agent=data['agent']).exists()
@@ -137,8 +138,7 @@ class AgentService:
                         serializer = AgentSerializer(data=i)
                         if serializer.is_valid():
                             agent = serializer.save()
-                            print(f'{x} : Added agents : ', agent.name)
-                            x += 1
+
                             if not ph1_exists:
                                 AgentPhoneNumber.objects.create(agent=agent, phone_number=int(i['phone_number1']),
                                                                 status=status)
