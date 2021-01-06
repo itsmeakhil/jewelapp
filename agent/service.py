@@ -1,15 +1,27 @@
+from datetime import date, datetime
+
 import pandas
 from django.db import transaction
 
-from agent.models import AgentStatus, ContactStatus, Agent, AgentPhoneNumber, PhoneNumberStatus
+from agent.models import AgentStatus, ContactStatus, Agent, AgentPhoneNumber, PhoneNumberStatus, Recall
 from agent.serializers import AgentSerializer, ContactStatusSerializer, PhoneNumberStatusSerializer, \
-    AgentRemarksSerializer
+    AgentRemarksSerializer, RecallSerializer
 from questions.models import AgentAnswers, Question, QuestionOption
 from utils import responses as response, logger, constants
 
 
 class AgentService:
     def get_agent(self, request):
+        if Recall.objects.get_by_filter(status=1, date=date.today(), time__lte=datetime.now().time()):
+            recall = Recall.objects.get_by_filter(status=1, date=date.today(), time__lte=datetime.now().time())
+            recall.status = 2
+            recall.save()
+            agent = Agent.objects.get_by_id(recall.agent.id)
+            serializer = AgentSerializer(agent)
+            agent.is_assigned = True
+            agent.save()
+            return response.get_success_200('Agent details loaded successfully', serializer.data)
+
         if Agent.objects.filter(is_assigned=False).exists():
             agent = Agent.objects.get_by_filter(is_assigned=False)[0]
             serializer = AgentSerializer(agent)
@@ -74,7 +86,7 @@ class AgentService:
                 answer = AgentAnswers.objects.get(agent=data['agent'], question=data['question'])
                 answer.option = option
                 answer.save()
-                return response.put_success_200('Answer updated successfully',data={})
+                return response.put_success_200('Answer updated successfully', data={})
             option = QuestionOption.objects.get_by_id(data['option'])
             AgentAnswers.objects.create(agent=agent, question=question, option=option)
             return response.get_success_200('Answer added successfully', data={})
@@ -154,3 +166,12 @@ class AgentService:
                 answer.save()
                 return response.put_success_message('Answer remarks added successfully')
             return response.error_response_400('Answer not found.')
+
+    def add_recall(self, data):
+        with transaction.atomic():
+            if not Recall.objects.filter(agent=data['agent']).exists():
+                serializer = RecallSerializer(data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return response.put_success_message('Recall added successfully')
+                return response.error_response_400('Data is incorrect')

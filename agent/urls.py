@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^add-answer/remarks/$', views.AddQuestionRemarks.as_view(), name='add_answer_remarks'),
     url(r'^files/$', views.AddBulkAgents.as_view(), name='files'),
     url(r'^add-agent-remarks/$', views.AddAgentsRemarks.as_view(), name='agent_remarks'),
+    url(r'^recall/$', views.AddRecall.as_view(), name='recall'),
 ]

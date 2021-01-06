@@ -166,6 +166,9 @@ class CustomerService:
                     serialized_data = CustomerSerializer(customer_data, data=data)
                     if serialized_data.is_valid():
                         serialized_data.save()
+                        for i in data['phone_numbers']:
+                            if not CustomerPhoneNumber.objects.get_by_filter(customer=customer_data.id, phone_number=i):
+                                CustomerPhoneNumber.objects.create(customer=customer_data.id, phone_number=i, status=1)
                         return response.put_success_200('Customer details updated successfully', serialized_data.data)
                     return response.serializer_error_400(serialized_data)
                 return response.error_response_404('Customer not found ')

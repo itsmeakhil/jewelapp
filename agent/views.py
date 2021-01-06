@@ -67,6 +67,7 @@ class AddQuestionAnswer(APIView):
             logger.error(f'Request -- Error : Question answer in to system {e}')
             return response.exception_500(e)
 
+
 class AddQuestionRemarks(APIView):
 
     def post(self, request):
@@ -95,4 +96,14 @@ class AddAgentsRemarks(APIView):
             return service.add_agent_remarks(data=request.data)
         except Exception as e:
             logger.error(f'Request -- Error : Adding Agents remarks in to system {e}')
+            return response.exception_500(e)
+
+
+class AddRecall(APIView):
+
+    def post(self, request):
+        try:
+            return service.add_recall(data=request.data)
+        except Exception as e:
+            logger.error(f'Request -- Error : Recall in to system {e}')
             return response.exception_500(e)

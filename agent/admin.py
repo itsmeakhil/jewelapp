@@ -2,11 +2,12 @@ from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 
 from agent.models import Agent, AgentStatus, ContactStatus, Group, Area, AgentPhoneNumber, PhoneNumberStatus, \
-    AgentRemarks
+    AgentRemarks, Recall
 
 admin.site.register(AgentPhoneNumber)
 admin.site.register(PhoneNumberStatus)
 admin.site.register(AgentRemarks)
+admin.site.register(Recall)
 
 
 @admin.register(Agent)
@@ -51,7 +52,6 @@ class AreaAdmin(admin.ModelAdmin):
     ordering = ('created_at',)
     list_filter = ('name', 'created_at',)
     exclude = ['is_delete', 'is_active']
-
 
 
 @admin.register(ContactStatus)

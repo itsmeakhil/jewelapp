@@ -5,6 +5,8 @@ from user.models import User
 from utils.basemanager import BaseManager
 from utils.basemodel import BaseModel
 
+recall_status = ((1, "Open"), (2, "Closed"))
+
 
 class ContactStatus(BaseModel):
     name = models.CharField(max_length=30, null=False, blank=False)
@@ -87,6 +89,18 @@ class AgentStatus(BaseModel):
     agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     status = models.ForeignKey(ContactStatus, on_delete=models.DO_NOTHING)
+
+    objects = BaseManager()
+
+    def __str__(self):
+        return self.agent.name
+
+
+class Recall(BaseModel):
+    agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
+    time = models.TimeField(null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
+    status = models.IntegerField(choices=recall_status, default=1)
 
     objects = BaseManager()
 
