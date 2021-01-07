@@ -14,7 +14,9 @@ class CustomerService:
     def get_customer(self):
         if Customer.objects.filter(is_attended=False).exists():
             customer = Customer.objects.get_by_filter(is_attended=False)[0]
-            if CustomerFieldReport.objects.get_by_filter(customer=customer).exists():
+            print(customer)
+            print(CustomerFieldReport.objects.get_by_filter(customer=customer.id).exists())
+            if CustomerFieldReport.objects.get_by_filter(customer=customer.id).exists():
                 field_report = CustomerFieldReport.objects.get_by_filter(customer=customer)[0]
                 field_report_serializer = CustomerFieldReportGetSerializer(field_report)
                 serializer = CustomerGetSerializer(customer)
@@ -26,6 +28,8 @@ class CustomerService:
                 }
                 logger.info('Get agent success')
                 return response.get_success_200('Customer details loaded successfully', data)
+            customer.is_attended = True
+            customer.save()
         logger.error(' No Customer data found ')
         return response.get_success_message('No data found')
 
