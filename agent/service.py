@@ -175,3 +175,9 @@ class AgentService:
                     serializer.save()
                     return response.put_success_message('Recall added successfully')
                 return response.error_response_400('Data is incorrect')
+            recall = Recall.objects.get_by_filter(agent=data['agent'])[0]
+            serializer = RecallSerializer(recall, data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return response.put_success_message('Recall added successfully')
+            return response.error_response_400('Data is incorrect')
