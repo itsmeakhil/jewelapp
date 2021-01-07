@@ -170,7 +170,7 @@ class AgentService:
     def add_recall(self, data):
         with transaction.atomic():
             if not Recall.objects.filter(agent=data['agent']).exists():
-                serializer = RecallSerializer(data)
+                serializer = RecallSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
                     return response.put_success_message('Recall added successfully')
