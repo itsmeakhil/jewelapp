@@ -6,7 +6,7 @@ from customer.models import CustomerPhoneNumber, CustomerRemarks, CustomerFieldR
     CustomerFieldAgent
 from customer.serializers import CustomerRemarksSerializer, CustomerSerializer, CustomerGetSerializer, \
     CustomerFieldAgentGetReportSerializer, CustomerFieldReportGetSerializer, CustomerFieldReportSerializer, \
-    CustomerFieldAgentReportSerializer
+    CustomerFieldAgentReportSerializer, CustomerPhoneNumberSerializer
 from utils import responses as response, logger, constants
 
 
@@ -166,11 +166,18 @@ class CustomerService:
                     serialized_data = CustomerSerializer(customer_data, data=data)
                     if serialized_data.is_valid():
                         serialized_data.save()
-                        for i in data['phone_numbers']:
-                            if not CustomerPhoneNumber.objects.get_by_filter(customer=customer_data.id, phone_number=i):
-                                status = PhoneNumberStatus.objects.get_by_id(1)
-                                CustomerPhoneNumber.objects.create(customer=customer_data, phone_number=i, status=status)
                         return response.put_success_200('Customer details updated successfully', serialized_data.data)
                     return response.serializer_error_400(serialized_data)
                 return response.error_response_404('Customer not found ')
             return response.error_response_400('Invalid data format ')
+
+    def update_phone_number(self, data, user, pk):
+        phone_exists = CustomerPhoneNumber.objects.get_by_filter(id=pk).exists()
+        if phone_exists:
+            phone_number = CustomerPhoneNumber.objects.get_by_id(pk)
+            serializer = CustomerPhoneNumberSerializer(phone_number, data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return response.put_success_message('Updated Customer Phone Number')
+            return response.error_response_400(f'Data is invalid ')
+        return response.error_response_400('Unable to find the Phone number ')

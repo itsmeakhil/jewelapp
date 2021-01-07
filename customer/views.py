@@ -125,3 +125,13 @@ class FieldReportViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk, *args, **kwargs):
         return service.update_field_report(data=request.data, pk=pk)
+
+
+class UpdatePhoneNumber(APIView):
+
+    def put(self, request, pk):
+        try:
+            return service.update_phone_number(data=request.data, pk=pk)
+        except Exception as e:
+            logger.error(f'Request -- Error : updating phone number in to system {e}')
+            return response.exception_500(e)
