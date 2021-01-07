@@ -14,8 +14,6 @@ class CustomerService:
     def get_customer(self):
         if Customer.objects.filter(is_attended=False).exists():
             customer = Customer.objects.get_by_filter(is_attended=False)[0]
-            print(customer)
-            print(CustomerFieldReport.objects.get_by_filter(customer=customer.id).exists())
             if CustomerFieldReport.objects.get_by_filter(customer=customer.id).exists():
                 field_report = CustomerFieldReport.objects.get_by_filter(customer=customer)[0]
                 field_report_serializer = CustomerFieldReportGetSerializer(field_report)
@@ -175,7 +173,7 @@ class CustomerService:
                 return response.error_response_404('Customer not found ')
             return response.error_response_400('Invalid data format ')
 
-    def update_phone_number(self, data, user, pk):
+    def update_phone_number(self, data, pk):
         phone_exists = CustomerPhoneNumber.objects.get_by_filter(id=pk).exists()
         if phone_exists:
             phone_number = CustomerPhoneNumber.objects.get_by_id(pk)
