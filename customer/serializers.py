@@ -20,7 +20,7 @@ class CustomerGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = ('id', 'bride_name', 'name_of_guardian', 'house_name', 'place', 'area', 'area_name', 'post_office',
-                  'district', 'marriage_date', 'number', 'remarks')
+                  'district', 'marriage_date', 'number', 'remarks', 'agent')
         read_only_fields = ('area_name', 'number', 'remarks')
 
     def get_number(self, obj):
