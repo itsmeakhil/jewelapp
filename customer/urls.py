@@ -22,4 +22,8 @@ urlpatterns = [
         'get': 'retrieve',
         'put': 'update',
     }), name='field_report_details'),
+    path('get-customers/', views.GetCustomersWithFieldReport.as_view(), name='get_customer'),
+    path('customer-details-with-report/<int:pk>/', views.GetCustomersWithFieldReportDetails.as_view(),
+         name='customer_details_with_report'),
+
 ]

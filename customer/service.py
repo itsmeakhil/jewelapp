@@ -3,10 +3,10 @@ from django.db.models import Q
 
 from agent.models import ContactStatus, PhoneNumberStatus
 from customer.models import CustomerPhoneNumber, CustomerRemarks, CustomerFieldReport, Customer, CustomerStatus, \
-    CustomerFieldAgent
+    CustomerFieldAgent, CustomerWithFieldReport
 from customer.serializers import CustomerRemarksSerializer, CustomerSerializer, CustomerGetSerializer, \
     CustomerFieldAgentGetReportSerializer, CustomerFieldReportGetSerializer, CustomerFieldReportSerializer, \
-    CustomerFieldAgentReportSerializer, CustomerPhoneNumberSerializer
+    CustomerFieldAgentReportSerializer, CustomerPhoneNumberSerializer, CustomerWithFieldReportGetSerializer
 from utils import responses as response, logger, constants
 
 
@@ -135,7 +135,9 @@ class CustomerService:
                         if CustomerFieldAgent.objects.get_by_filter(customer=data['customer']).exists():
                             cus_field_agent_data = CustomerFieldAgent.objects.get(customer=data['customer'])
                             cus_field_agent_data.status = 2,
+                            customer = Customer.objects.get_by_id(data['customer'])
                             serialized_data.save()
+                            CustomerWithFieldReport.objects.create(customer=customer)
                             return response.post_success_201('Field Report added successfully', serialized_data.data)
                         return response.error_response_400('The customer is not assigned for field agent')
                     return response.serializer_error_400(serialized_data)
@@ -183,3 +185,31 @@ class CustomerService:
                 return response.put_success_message('Updated Customer Phone Number')
             return response.error_response_400(f'Data is invalid ')
         return response.error_response_400('Unable to find the Phone number ')
+
+    def get_all_customers_with_filed_report(self, query):
+        customer = CustomerWithFieldReport.objects.get_all()
+        if query:
+            customer = customer.filter(customer__bride_name__icontains=query)
+        customer = customer.order_by('-last_call_date')
+        serializer = CustomerWithFieldReportGetSerializer(customer, many=True)
+        return response.get_success_200('Customer list loaded successfully', serializer.data)
+
+    def get_customer_details_with_field_report(self, pk):
+        if Customer.objects.get_by_filter(id=pk):
+            customer = Customer.objects.get_by_id(pk)
+            if CustomerFieldReport.objects.get_by_filter(customer=pk).exists():
+                field_report = CustomerFieldReport.objects.get_by_filter(customer=pk)[0]
+                field_report_serializer = CustomerFieldReportGetSerializer(field_report)
+                serializer = CustomerGetSerializer(customer)
+                customer.is_attended = True
+                customer.save()
+                data = {
+                    "customer": serializer.data,
+                    "field_report": field_report_serializer.data
+                }
+                logger.info('Get agent success')
+                return response.get_success_200('Customer details loaded successfully', data)
+            customer.is_attended = True
+            customer.save()
+        logger.error(' No Customer data found ')
+        return response.get_success_message('No data found')

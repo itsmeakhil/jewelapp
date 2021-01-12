@@ -135,3 +135,23 @@ class UpdatePhoneNumber(APIView):
         except Exception as e:
             logger.error(f'Request -- Error : updating phone number in to system {e}')
             return response.exception_500(e)
+
+
+class GetCustomersWithFieldReport(APIView):
+
+    def get(self, request):
+        try:
+            return service.get_all_customers_with_filed_report(request.GET.get('query'))
+        except Exception as e:
+            logger.error(f'Request -- Error : Getting customer list in to system {e}')
+            return response.exception_500(e)
+
+
+class GetCustomersWithFieldReportDetails(APIView):
+
+    def get(self, request, pk):
+        try:
+            return service.get_customer_details_with_field_report(pk=pk)
+        except Exception as e:
+            logger.error(f'Request -- Error : Getting customer list in to system {e}')
+            return response.exception_500(e)

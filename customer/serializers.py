@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from customer.models import Customer, CustomerPhoneNumber, CustomerRemarks, CustomerFieldReport, CustomerFieldAgent
+from customer.models import Customer, CustomerPhoneNumber, CustomerRemarks, CustomerFieldReport, CustomerFieldAgent, \
+    CustomerWithFieldReport
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -84,3 +85,11 @@ class CustomerFieldAgentGetReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerFieldAgent
         fields = ('user', 'customer')
+
+
+class CustomerWithFieldReportGetSerializer(serializers.ModelSerializer):
+    customer = CustomerSerializer(read_only=True)
+
+    class Meta:
+        model = CustomerWithFieldReport
+        fields = ('id', 'customer')

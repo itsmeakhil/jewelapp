@@ -107,3 +107,13 @@ class CustomerFieldAgent(BaseModel):
 
     def __str__(self):
         return self.customer.bride_name
+
+
+class CustomerWithFieldReport(BaseModel):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    last_call_date = models.DateTimeField(null=True, blank=True, auto_now_add=True)
+
+    objects = BaseManager()
+
+    def __str__(self):
+        return self.customer.bride_name
