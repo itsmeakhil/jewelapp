@@ -196,8 +196,8 @@ class CustomerService:
             return response.error_response_400(f'Data is invalid ')
         return response.error_response_400('Unable to find the Phone number ')
 
-    def get_all_customers_with_filed_report(self, query):
-        customer = CustomerWithFieldReport.objects.get_all()
+    def get_all_customers_with_filed_report(self, query, user):
+        customer = CustomerWithFieldReport.objects.get_by_filter(user=user)
         if query:
             customer = customer.filter(customer__bride_name__icontains=query)
         customer = customer.order_by('-last_call_date')

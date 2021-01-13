@@ -12,7 +12,7 @@ from utils import responses as response, logger, constants
 
 class AgentService:
     def get_agent(self, request):
-        if Recall.objects.get_by_filter(status=1, date=date.today(), time__lte=datetime.now().time()):
+        if Recall.objects.get_by_filter(status=1, date=date.today(), time__gte=datetime.now().time()):
             recall = Recall.objects.get_by_filter(status=1, date=date.today(), time__lte=datetime.now().time())
             recall.status = 2
             recall.save()

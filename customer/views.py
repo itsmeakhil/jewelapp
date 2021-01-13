@@ -141,7 +141,7 @@ class GetCustomersWithFieldReport(APIView):
 
     def get(self, request):
         try:
-            return service.get_all_customers_with_filed_report(request.GET.get('query'))
+            return service.get_all_customers_with_filed_report(query=request.GET.get('query'), user=request.user.id)
         except Exception as e:
             logger.error(f'Request -- Error : Getting customer list in to system {e}')
             return response.exception_500(e)
