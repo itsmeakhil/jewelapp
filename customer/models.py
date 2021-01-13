@@ -111,7 +111,8 @@ class CustomerFieldAgent(BaseModel):
 
 class CustomerWithFieldReport(BaseModel):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    last_call_date = models.DateTimeField(null=True, blank=True, auto_now_add=True)
+    last_call_date = models.DateTimeField(null=True, blank=True, auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
     objects = BaseManager()
 

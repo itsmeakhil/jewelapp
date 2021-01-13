@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import transaction
 from django.db.models import Q
 
@@ -7,6 +9,7 @@ from customer.models import CustomerPhoneNumber, CustomerRemarks, CustomerFieldR
 from customer.serializers import CustomerRemarksSerializer, CustomerSerializer, CustomerGetSerializer, \
     CustomerFieldAgentGetReportSerializer, CustomerFieldReportGetSerializer, CustomerFieldReportSerializer, \
     CustomerFieldAgentReportSerializer, CustomerPhoneNumberSerializer, CustomerWithFieldReportGetSerializer
+from user.models import User
 from utils import responses as response, logger, constants
 
 
@@ -138,9 +141,13 @@ class CustomerService:
                         if CustomerFieldAgent.objects.get_by_filter(customer=data['customer']).exists():
                             cus_field_agent_data = CustomerFieldAgent.objects.get(customer=data['customer'])
                             cus_field_agent_data.status = 2,
-                            customer = Customer.objects.get_by_id(data['customer'])
                             serialized_data.save()
-                            CustomerWithFieldReport.objects.create(customer=customer)
+                            if CustomerWithFieldReport.objects.get_by_filter(customer=data['customer']).exists():
+                                CustomerWithFieldReport.objects.get(customer=data['customer']).update(
+                                    last_call_date=datetime.now())
+                            user = User.objects.get_by_id(1)
+                            customer = Customer.objects.get_by_id(data['customer'])
+                            CustomerWithFieldReport.objects.create(customer=customer, user=user)
                             return response.post_success_201('Field Report added successfully', serialized_data.data)
                         return response.error_response_400('The customer is not assigned for field agent')
                     return response.serializer_error_400(serialized_data)
