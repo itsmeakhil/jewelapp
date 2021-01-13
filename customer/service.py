@@ -57,8 +57,11 @@ class CustomerService:
     def update_phone_status(self, data, user):
         phone_exists = CustomerPhoneNumber.objects.filter(phone_number=data['phone_number']).exists()
         if phone_exists:
-            status = PhoneNumberStatus.objects.get(data['status'])
-            phone = CustomerPhoneNumber.objects.get(phone_number=data['phone_number'])
+            print(phone_exists)
+            status = PhoneNumberStatus.objects.get_by_id(data['status'])
+            print(status)
+            phone = CustomerPhoneNumber.objects.get_by_filter(phone_number=data['phone_number']).first()
+            print(phone)
             phone.status = status
             phone.save()
             return response.put_success_message('Updated Customer Phone Number')
