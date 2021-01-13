@@ -12,8 +12,10 @@ from utils import responses as response, logger, constants
 
 class AgentService:
     def get_agent(self, request):
+        print('he')
         if Recall.objects.get_by_filter(status=1, date=date.today(), time__gte=datetime.now().time()):
-            recall = Recall.objects.get_by_filter(status=1, date=date.today(), time__lte=datetime.now().time())
+            recall = Recall.objects.get_by_filter(status=1, date=date.today(), time__gte=datetime.now().time()).first()
+            print(recall)
             recall.status = 2
             recall.save()
             agent = Agent.objects.get_by_id(recall.agent.id)
@@ -178,6 +180,6 @@ class AgentService:
             recall = Recall.objects.get_by_filter(agent=data['agent'])[0]
             serializer = RecallSerializer(recall, data=data)
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(status=1)
                 return response.put_success_message('Recall added successfully')
             return response.error_response_400('Data is incorrect')
