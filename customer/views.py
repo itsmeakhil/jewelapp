@@ -151,7 +151,7 @@ class GetCustomersWithFieldReportDetails(APIView):
 
     def get(self, request, pk):
         try:
-            return service.get_customer_details_with_field_report(pk=pk)
+            return service.get_customer_details_with_field_report(pk=pk, user=request.user)
         except Exception as e:
             logger.error(f'Request -- Error : Getting customer list in to system {e}')
             return response.exception_500(e)

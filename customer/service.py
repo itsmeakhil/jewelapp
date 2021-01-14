@@ -146,8 +146,8 @@ class CustomerService:
                                 CustomerWithFieldReport.objects.get(customer=data['customer']).update(
                                     last_call_date=datetime.now())
                             user = User.objects.get_by_id(1)
-                            customer = Customer.objects.get_by_id(data['customer'])
-                            CustomerWithFieldReport.objects.create(customer=customer, user=user)
+                            customer = Customer.objects.get_by_id(data['customer'], user=user)
+                            CustomerWithFieldReport.objects.create(customer=customer)
                             return response.post_success_201('Field Report added successfully', serialized_data.data)
                         return response.error_response_400('The customer is not assigned for field agent')
                     return response.serializer_error_400(serialized_data)
@@ -197,17 +197,23 @@ class CustomerService:
         return response.error_response_400('Unable to find the Phone number ')
 
     def get_all_customers_with_filed_report(self, query, user):
-        customer = CustomerWithFieldReport.objects.get_by_filter(user=user)
+        customer = CustomerWithFieldReport.objects.get_by_filter(Q(user=user) | Q(user=1))
         if query:
             customer = customer.filter(customer__bride_name__icontains=query)
         customer = customer.order_by('-last_call_date')
         serializer = CustomerWithFieldReportGetSerializer(customer, many=True)
         return response.get_success_200('Customer list loaded successfully', serializer.data)
 
-    def get_customer_details_with_field_report(self, pk):
+    def get_customer_details_with_field_report(self, pk, user):
         if Customer.objects.get_by_filter(id=pk):
             customer = Customer.objects.get_by_id(pk)
             if CustomerFieldReport.objects.get_by_filter(customer=pk).exists():
+                if CustomerWithFieldReport.objects.get_by_filter(customer=pk)[0]:
+                    data = CustomerWithFieldReport.objects.get_by_filter(customer=pk)[0]
+                    if not data.user.id == 1:
+                        return response.error_response_400('User already assigned and called customer')
+                    data.user = user
+                    data.save()
                 field_report = CustomerFieldReport.objects.get_by_filter(customer=pk)[0]
                 field_report_serializer = CustomerFieldReportGetSerializer(field_report)
                 serializer = CustomerGetSerializer(customer)
