@@ -145,9 +145,10 @@ class CustomerService:
                             if CustomerWithFieldReport.objects.get_by_filter(customer=data['customer']).exists():
                                 CustomerWithFieldReport.objects.get(customer=data['customer']).update(
                                     last_call_date=datetime.now())
-                            user = User.objects.get_by_id(1)
-                            customer = Customer.objects.get_by_id(data['customer'], user=user)
-                            CustomerWithFieldReport.objects.create(customer=customer)
+                            user = User.objects.get_by_id(id=1)
+                            print(user)
+                            customer = Customer.objects.get_by_id(data['customer'])
+                            CustomerWithFieldReport.objects.create(customer=customer, user=user)
                             return response.post_success_201('Field Report added successfully', serialized_data.data)
                         return response.error_response_400('The customer is not assigned for field agent')
                     return response.serializer_error_400(serialized_data)
