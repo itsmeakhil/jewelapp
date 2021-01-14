@@ -145,7 +145,7 @@ class CustomerService:
                             if CustomerWithFieldReport.objects.get_by_filter(customer=data['customer']).exists():
                                 CustomerWithFieldReport.objects.get(customer=data['customer']).update(
                                     last_call_date=datetime.now())
-                            user = User.objects.get_by_id(id=1)
+                            user = User.objects.get_by_id(pk=1)
                             print(user)
                             customer = Customer.objects.get_by_id(data['customer'])
                             CustomerWithFieldReport.objects.create(customer=customer, user=user)
