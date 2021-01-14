@@ -144,7 +144,7 @@ class CustomerService:
                             serialized_data.save()
                             cus_field_agent_data.save()
                             if CustomerWithFieldReport.objects.get_by_filter(customer=data['customer']).exists():
-                                CustomerWithFieldReport.objects.get(customer=data['customer']).update(
+                                CustomerWithFieldReport.objects.filter(customer=data['customer']).update(
                                     last_call_date=datetime.now())
                             user = User.objects.get_by_id(pk=1)
                             print(user)
