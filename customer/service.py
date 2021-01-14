@@ -197,11 +197,17 @@ class CustomerService:
         return response.error_response_400('Unable to find the Phone number ')
 
     def get_all_customers_with_filed_report(self, query, user):
-        customer = CustomerWithFieldReport.objects.get_by_filter(Q(user=user) | Q(user=1))
+        query_set = (Q(user=user) | Q(user=1))
+        customer = CustomerWithFieldReport.objects.get_all()
+        print(customer)
+        customer = customer.filter(query_set)
+        print(customer)
         if query:
             customer = customer.filter(customer__bride_name__icontains=query)
-        customer = customer.order_by('-last_call_date')
+        # customer = customer.order_by('-last_call_date')
+        print(customer)
         serializer = CustomerWithFieldReportGetSerializer(customer, many=True)
+        print(serializer.data)
         return response.get_success_200('Customer list loaded successfully', serializer.data)
 
     def get_customer_details_with_field_report(self, pk, user):
