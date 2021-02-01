@@ -15,24 +15,25 @@ from utils import responses as response, logger, constants
 
 class CustomerService:
     def get_customer(self):
-        if Customer.objects.filter(is_attended=False).exists():
-            customer = Customer.objects.get_by_filter(is_attended=False)[0]
-            if CustomerFieldReport.objects.get_by_filter(customer=customer.id).exists():
-                field_report = CustomerFieldReport.objects.get_by_filter(customer=customer)[0]
-                field_report_serializer = CustomerFieldReportGetSerializer(field_report)
-                serializer = CustomerGetSerializer(customer)
+        with transaction.atomic():
+            if Customer.objects.filter(is_attended=False).exists():
+                customer = Customer.objects.get_by_filter(is_attended=False)[0]
+                if CustomerFieldReport.objects.get_by_filter(customer=customer.id).exists():
+                    field_report = CustomerFieldReport.objects.get_by_filter(customer=customer)[0]
+                    field_report_serializer = CustomerFieldReportGetSerializer(field_report)
+                    serializer = CustomerGetSerializer(customer)
+                    customer.is_attended = True
+                    customer.save()
+                    data = {
+                        "customer": serializer.data,
+                        "field_report": field_report_serializer.data
+                    }
+                    logger.info('Get agent success')
+                    return response.get_success_200('Customer details loaded successfully', data)
                 customer.is_attended = True
                 customer.save()
-                data = {
-                    "customer": serializer.data,
-                    "field_report": field_report_serializer.data
-                }
-                logger.info('Get agent success')
-                return response.get_success_200('Customer details loaded successfully', data)
-            customer.is_attended = True
-            customer.save()
-        logger.error(' No Customer data found ')
-        return response.get_success_message('No data found')
+            logger.error(' No Customer data found ')
+            return response.get_success_message('No data found')
 
     def get_all_customers(self, request):
         customer = Customer.objects.get_by_filter(is_assigned=False)
@@ -94,11 +95,11 @@ class CustomerService:
                 return response.get_success_200('Customer Details added successfully', serializer.data)
             return response.serializer_error_400(serializer)
 
-    def add_customer_remarks(self, data):
+    def add_customer_remarks(self, data, user):
         with transaction.atomic():
             serializer = CustomerRemarksSerializer(data=data)
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(user=user)
                 return response.post_success_201('Successfully added Remarks ', serializer.data)
             return response.serializer_error_400(serializer)
 
@@ -144,10 +145,11 @@ class CustomerService:
                             serialized_data.save()
                             cus_field_agent_data.save()
                             if CustomerWithFieldReport.objects.get_by_filter(customer=data['customer']).exists():
-                                CustomerWithFieldReport.objects.filter(customer=data['customer']).update(
-                                    last_call_date=datetime.now())
+                                customer_with_report = \
+                                    CustomerWithFieldReport.objects.get_by_filter(customer=data['customer'])[0]
+                                customer_with_report.last_call_date = datetime.now()
+                                customer_with_report.save()
                             user = User.objects.get_by_id(pk=1)
-                            print(user)
                             customer = Customer.objects.get_by_id(data['customer'])
                             CustomerWithFieldReport.objects.create(customer=customer, user=user)
                             return response.post_success_201('Field Report added successfully', serialized_data.data)
@@ -163,6 +165,14 @@ class CustomerService:
                     field_data = CustomerFieldReport.objects.get_by_id(pk)
                     serialized_data = CustomerFieldReportSerializer(field_data, data=data)
                     if serialized_data.is_valid():
+                        if data['phone_number']:
+                            status = PhoneNumberStatus.objects.get(name=constants.ACTIVE)
+                            for i in data['phone_number']:
+                                if not CustomerPhoneNumber.objects.get_by_filter(phone_number=int(i)).exists():
+                                    customer = Customer.objects.get_by_id(field_data.customer.id)
+                                    CustomerPhoneNumber.objects.create(customer=customer,
+                                                                       phone_number=int(i),
+                                                                       status=status)
                         serialized_data.save()
                         return response.post_success_201('Field Report added successfully', serialized_data.data)
                     return response.serializer_error_400(serialized_data)
@@ -201,15 +211,11 @@ class CustomerService:
     def get_all_customers_with_filed_report(self, query, user):
         query_set = (Q(user=user) | Q(user=1))
         customer = CustomerWithFieldReport.objects.get_all()
-        print(customer)
         customer = customer.filter(query_set)
-        print(customer)
         if query:
             customer = customer.filter(customer__bride_name__icontains=query)
         # customer = customer.order_by('-last_call_date')
-        print(customer)
         serializer = CustomerWithFieldReportGetSerializer(customer, many=True)
-        print(serializer.data)
         return response.get_success_200('Customer list loaded successfully', serializer.data)
 
     def get_customer_details_with_field_report(self, pk, user):
@@ -218,7 +224,9 @@ class CustomerService:
             if CustomerFieldReport.objects.get_by_filter(customer=pk).exists():
                 if CustomerWithFieldReport.objects.get_by_filter(customer=pk)[0]:
                     data = CustomerWithFieldReport.objects.get_by_filter(customer=pk)[0]
-                    if not data.user.id == 1:
+                    if data.user.id == 1 or data.user.id == user.id:
+                        pass
+                    else:
                         return response.error_response_400('User already assigned and called customer')
                     data.user = user
                     data.save()

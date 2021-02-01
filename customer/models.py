@@ -13,6 +13,8 @@ class Customer(BaseModel):
     bride_name = models.CharField(max_length=100, null=True, blank=True)
     name_of_guardian = models.CharField(max_length=100, null=True, blank=True)
     house_name = models.CharField(max_length=100, null=True, blank=True)
+    name_of_father = models.CharField(max_length=100, null=True, blank=True)
+    name_of_mother = models.CharField(max_length=100, null=True, blank=True)
     place = models.CharField(max_length=100, null=True, blank=True)
     area = models.ForeignKey(Area, on_delete=models.DO_NOTHING)
     post_office = models.CharField(max_length=100, null=True, blank=True)
@@ -43,7 +45,7 @@ class CustomerRemarks(BaseModel):
     remarks = models.TextField(null=True, blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True, editable=False)
-
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=1)
     objects = BaseManager()
 
     def __str__(self):

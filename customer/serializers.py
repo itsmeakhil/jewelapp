@@ -20,8 +20,9 @@ class CustomerGetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Customer
-        fields = ('id', 'bride_name', 'name_of_guardian', 'house_name', 'place', 'area', 'area_name', 'post_office',
-                  'district', 'marriage_date', 'number', 'remarks', 'agent')
+        fields = (
+            'id', 'bride_name', 'name_of_guardian', 'name_of_father', 'name_of_mother', 'house_name', 'place', 'area',
+            'area_name', 'post_office', 'district', 'marriage_date', 'number', 'remarks', 'agent')
         read_only_fields = ('area_name', 'number', 'remarks')
 
     def get_number(self, obj):
@@ -34,7 +35,7 @@ class CustomerGetSerializer(serializers.ModelSerializer):
 
     def get_remarks(self, obj):
         data = CustomerRemarks.objects.get_by_filter(customer=obj.id)
-        data = CustomerRemarksSerializer(data, many=True)
+        data = CustomerRemarksGetSerializer(data, many=True)
         return data.data
 
 
@@ -52,6 +53,19 @@ class CustomerRemarksSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerRemarks
         fields = '__all__'
+
+
+class CustomerRemarksGetSerializer(serializers.ModelSerializer):
+    """Serializer for getting Customer Remarks"""
+    user_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CustomerRemarks
+        fields = ('id', 'remarks', 'customer', 'date', 'user', 'user_name')
+        read_only_fields = ('user_name',)
+
+    def get_user_name(self, obj):
+        return obj.user.name
 
 
 class CustomerFieldReportSerializer(serializers.ModelSerializer):

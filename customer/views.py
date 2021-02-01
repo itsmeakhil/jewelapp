@@ -33,7 +33,7 @@ class AddCustomerRemarks(APIView):
 
     def post(self, request):
         try:
-            return service.add_customer_remarks(data=request.data)
+            return service.add_customer_remarks(data=request.data,user=request.user)
         except Exception as e:
             logger.error(f'Request -- Error : Adding Agents remarks in to system {e}')
             return response.exception_500(e)

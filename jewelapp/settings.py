@@ -96,7 +96,7 @@ SQLITE = False
 LOCAL_POSTGRESQL = False
 ON_HEROKU = False
 ON_DEV = True
-DATABASES = {}
+# DATABASES = {}
 
 if SQLITE:
     DATABASES = {
