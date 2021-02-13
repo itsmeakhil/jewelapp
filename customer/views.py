@@ -155,3 +155,12 @@ class GetCustomersWithFieldReportDetails(APIView):
         except Exception as e:
             logger.error(f'Request -- Error : Getting customer list in to system {e}')
             return response.exception_500(e)
+
+class CustomerBulkInsert(APIView):
+
+    def post(self, request):
+        try:
+            return service.add_bulk_customers(request)
+        except Exception as e:
+            logger.error(f'Request -- Error : Getting customer list in to system {e}')
+            return response.exception_500(e)

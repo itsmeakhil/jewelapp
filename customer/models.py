@@ -21,13 +21,15 @@ class Customer(BaseModel):
     district = models.CharField(max_length=100, null=True, blank=True)
     marriage_date = models.DateField(null=True, blank=True)
     agent = models.ForeignKey(Agent, on_delete=models.DO_NOTHING)
+    month = models.IntegerField(default=1, null=True)
     is_attended = models.BooleanField(default=False)
     is_assigned = models.BooleanField(default=False)
 
     objects = BaseManager()
 
     def __str__(self):
-        return self.bride_name
+
+        return 'Cus'
 
 
 class CustomerPhoneNumber(BaseModel):
@@ -38,7 +40,7 @@ class CustomerPhoneNumber(BaseModel):
     objects = BaseManager()
 
     def __str__(self):
-        return self.customer.bride_name
+        return 'status'
 
 
 class CustomerRemarks(BaseModel):

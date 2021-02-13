@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import pandas
 from django.db import transaction
 from django.db.models import Q
 
@@ -245,3 +246,76 @@ class CustomerService:
             customer.save()
         logger.error(' No Customer data found ')
         return response.get_success_message('No data found')
+
+    def add_bulk_customers(self, request):
+        file = request.FILES['file']
+        print(file)
+        if file:
+            excel_data_df = pandas.read_excel(file, sheet_name='Sheet1')
+            data = excel_data_df.to_dict(orient='record')
+            status = PhoneNumberStatus.objects.get(name=constants.ACTIVE)
+            x = 1
+            print(data)
+            for i in data:
+                m = "hcsahh"
+                f = 100.00
+                m_type = type(m)  # Do not remove this
+                f_type = type(f)
+                n_type = type(i['bride_name'])
+                father_type = type(i['name_of_father'])
+                mother_type = type(i['name_of_mother'])
+                if n_type == m_type or father_type == m_type or mother_type == m_type:
+
+                    if type(i['house_name']) == f_type:
+                        i.update({'house_name': ""})
+                    if type(i['bride_name']) == f_type:
+                        i.update({'bride_name': ""})
+                    if type(i['name_of_father']) == f_type:
+                        i.update({'name_of_father': ""})
+                    if type(i['name_of_mother']) == f_type:
+                        i.update({'name_of_mother': ""})
+                    if type(i['month']) == f_type:
+                        i.update({'month': ""})
+                    if type(i['place']) == f_type:
+                        i.update({'place': ""})
+                    if type(i['phone_number1']) == f_type:
+                        i.update({'phone_number1': ""})
+                    if type(i['phone_number2']) == f_type:
+                        i.update({'phone_number2': ""})
+                    if type(i['phone_number3']) == f_type:
+                        i.update({'phone_number3': ""})
+
+                    ph1_exists = True
+                    ph2_exists = True
+                    ph3_exists = True
+
+                    if i['phone_number1']:
+                        ph1_exists = CustomerPhoneNumber.objects.get_by_filter(
+                            phone_number=int(i['phone_number1'])).exists()
+                    if i['phone_number2']:
+                        ph2_exists = CustomerPhoneNumber.objects.get_by_filter(
+                            phone_number=int(i['phone_number2'])).exists()
+                    if i['phone_number3']:
+                        ph3_exists = CustomerPhoneNumber.objects.get_by_filter(
+                            phone_number=int(i['phone_number3'])).exists()
+                    print('----------------------', x)
+                    x +=1
+                    print(ph1_exists, ph2_exists, ph3_exists)
+                    if not ph1_exists or not ph2_exists or not ph3_exists:
+                        serializer = CustomerSerializer(data=i)
+                        if serializer.is_valid():
+                            customer = serializer.save()
+                            print(i)
+                            if not ph1_exists:
+                                CustomerPhoneNumber.objects.create(customer=customer,
+                                                                   phone_number=int(i['phone_number1']),
+                                                                   status=status)
+                            if not ph2_exists:
+                                CustomerPhoneNumber.objects.create(customer=customer,
+                                                                   phone_number=int(i['phone_number2']),
+                                                                   status=status)
+                            if not ph3_exists:
+                                CustomerPhoneNumber.objects.create(customer=customer,
+                                                                   phone_number=int(i['phone_number3']),
+                                                                   status=status)
+        return response.post_success('Data added successfully')
