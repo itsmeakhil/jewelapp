@@ -3,7 +3,7 @@ from django.contrib import admin
 from customer.models import Customer, CustomerPhoneNumber, CustomerRemarks, CustomerFieldReport, CustomerStatus, \
     CustomerFieldAgent, CustomerWithFieldReport
 
-admin.site.register(Customer)
+
 admin.site.register(CustomerPhoneNumber)
 admin.site.register(CustomerRemarks)
 admin.site.register(CustomerFieldReport)
@@ -23,3 +23,22 @@ class CustomerWithFieldReportAdmin(admin.ModelAdmin):
     #         'fields': ('name', 'address', 'phone_number', 'email')
     #     }),
     # )
+
+
+class CustomerPhoneNumberInline(admin.StackedInline):
+    model = CustomerPhoneNumber
+    extra = 1
+
+class CustomerRemarksInline(admin.StackedInline):
+    model = CustomerRemarks
+    extra = 0
+
+class CustomerFieldReportInline(admin.StackedInline):
+    model = CustomerFieldReport
+    extra = 1
+
+
+class CustomerModelAdmin(admin.ModelAdmin):
+    inlines = [CustomerRemarksInline, CustomerPhoneNumberInline, CustomerFieldReportInline]
+
+admin.site.register(Customer, CustomerModelAdmin)
