@@ -28,8 +28,7 @@ class Customer(BaseModel):
     objects = BaseManager()
 
     def __str__(self):
-
-        return 'Cus'
+        return self.bride_name.__str__() + ': ' + self.name_of_father.__str__() + ': ' + self.name_of_mother.__str__()
 
 
 class CustomerPhoneNumber(BaseModel):
@@ -40,7 +39,7 @@ class CustomerPhoneNumber(BaseModel):
     objects = BaseManager()
 
     def __str__(self):
-        return 'status'
+        return self.customer.bride_name.__str__() + ': ' + self.customer.name_of_father.__str__() + ': ' + self.customer.name_of_mother.__str__() + ': ' + self.phone_number.__str__()
 
 
 class CustomerRemarks(BaseModel):
@@ -51,7 +50,7 @@ class CustomerRemarks(BaseModel):
     objects = BaseManager()
 
     def __str__(self):
-        return self.customer.bride_name
+        return self.customer.bride_name.__str__() + ': ' + self.customer.name_of_father.__str__() + ': ' + self.customer.name_of_mother.__str__()
 
 
 class CustomerFieldReport(BaseModel):
@@ -88,7 +87,7 @@ class CustomerFieldReport(BaseModel):
     objects = BaseManager()
 
     def __str__(self):
-        return self.customer.bride_name
+        return self.customer.bride_name.__str__() + ': ' + self.customer.name_of_father.__str__() + ': ' + self.customer.name_of_mother.__str__()
 
 
 class CustomerStatus(BaseModel):
@@ -99,7 +98,7 @@ class CustomerStatus(BaseModel):
     objects = BaseManager()
 
     def __str__(self):
-        return self.customer.bride_name
+        return self.customer.bride_name.__str__() + ': ' + self.customer.name_of_father.__str__() + ': ' + self.customer.name_of_mother.__str__()
 
 
 class CustomerFieldAgent(BaseModel):
@@ -110,7 +109,7 @@ class CustomerFieldAgent(BaseModel):
     objects = BaseManager()
 
     def __str__(self):
-        return self.customer.bride_name
+        return self.customer.bride_name.__str__() + ': ' + self.customer.name_of_father.__str__() + ': ' + self.customer.name_of_mother.__str__()
 
 
 class CustomerWithFieldReport(BaseModel):
@@ -121,4 +120,4 @@ class CustomerWithFieldReport(BaseModel):
     objects = BaseManager()
 
     def __str__(self):
-        return self.customer.bride_name
+        return self.customer.bride_name.__str__() + ': ' + self.customer.name_of_father.__str__() + ': ' + self.customer.name_of_mother.__str__()

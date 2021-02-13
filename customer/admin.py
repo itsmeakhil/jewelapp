@@ -40,7 +40,7 @@ class CustomerFieldReportInline(admin.StackedInline):
 
 class CustomerModelAdmin(admin.ModelAdmin):
     list_display = ('bride_name', 'name_of_father', 'name_of_mother', 'place', 'area', 'post_office', 'district', 'marriage_date', 'month')
-    search_fields = ('bride_name')
+    search_fields = ('bride_name',)
     inlines = [CustomerRemarksInline, CustomerPhoneNumberInline, CustomerFieldReportInline]
 
 admin.site.register(Customer, CustomerModelAdmin)
