@@ -26,5 +26,5 @@ urlpatterns = [
     path('customer-details-with-report/<int:pk>/', views.GetCustomersWithFieldReportDetails.as_view(),
          name='customer_details_with_report'),
     path('customers/bulk-insert/', views.CustomerBulkInsert.as_view(), name='customer-insert'),
-
+    path('customers/assign-kpcaller/', views.CustomersToKPCaller.as_view(), name='customer-kpcaller-assign'),
 ]

@@ -214,7 +214,13 @@ class CustomerService:
         customer = CustomerWithFieldReport.objects.get_all()
         customer = customer.filter(query_set)
         if query:
-            customer = customer.filter(customer__bride_name__icontains=query)
+            customer = customer.filter(
+                Q(customer__bride_name__icontains=query) | Q(
+                    customer__name_of_father__icontains=query) | Q(
+                    customer__name_of_mother__icontains=query) | Q(
+                    customer__name_of_guardian__icontains=query) | Q(
+                    customer__place__icontains=query) | Q(
+                    customer__house_name__icontains=query))
         # customer = customer.order_by('-last_call_date')
         serializer = CustomerWithFieldReportGetSerializer(customer, many=True)
         return response.get_success_200('Customer list loaded successfully', serializer.data)
@@ -299,7 +305,7 @@ class CustomerService:
                         ph3_exists = CustomerPhoneNumber.objects.get_by_filter(
                             phone_number=int(i['phone_number3'])).exists()
                     print('----------------------', x)
-                    x +=1
+                    x += 1
                     print(ph1_exists, ph2_exists, ph3_exists)
                     if not ph1_exists or not ph2_exists or not ph3_exists:
                         serializer = CustomerSerializer(data=i)
@@ -318,4 +324,22 @@ class CustomerService:
                                 CustomerPhoneNumber.objects.create(customer=customer,
                                                                    phone_number=int(i['phone_number3']),
                                                                    status=status)
+        return response.post_success('Data added successfully')
+
+    def assignCustomersToKPCaller(self, request):
+        customers = Customer.objects.all();
+        print(f'Total customers : {customers.__len__()}');
+        i = 0;
+        for customer in customers:
+            field_report = CustomerFieldReport.objects.filter(customer=customer);
+            if field_report is None or field_report.__len__() is 0:
+                print(f'field report adding : {i}')
+                CustomerFieldReport.objects.create(customer=customer);
+                print(f'field report added : {i}')
+            customer_with_field_report = CustomerWithFieldReport.objects.filter(customer=customer);
+            if customer_with_field_report is None or customer_with_field_report.__len__() is 0:
+                print(f'customer with field report adding : {i}')
+                CustomerWithFieldReport.objects.create(user_id=1, customer=customer);
+                print(f'customer with field report added : {i}')
+            i += 1
         return response.post_success('Data added successfully')

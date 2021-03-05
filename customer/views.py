@@ -1,4 +1,6 @@
 from rest_framework import viewsets
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
 from customer import service
@@ -161,6 +163,16 @@ class CustomerBulkInsert(APIView):
     def post(self, request):
         try:
             return service.add_bulk_customers(request)
+        except Exception as e:
+            logger.error(f'Request -- Error : Getting customer list in to system {e}')
+            return response.exception_500(e)
+
+@permission_classes((AllowAny,))
+class CustomersToKPCaller(APIView):
+
+    def get(self, request):
+        try:
+            return service.assignCustomersToKPCaller(request)
         except Exception as e:
             logger.error(f'Request -- Error : Getting customer list in to system {e}')
             return response.exception_500(e)
